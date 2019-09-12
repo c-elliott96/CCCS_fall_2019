@@ -33,13 +33,36 @@ int main()
 
     std::cin >> n;
     int p = 2;
+    int power_count = 0;
     
-    while (n % p != 0)
+    while (n != 1)
     {
-        p = get_next_prime_after(p);
+        while (n % p != 0)
+        {
+            p = get_next_prime_after(p);
+        }
+
+        while (n % p == 0)
+        {
+            n = n / p;
+            ++power_count;
+        }
+
+        std::cout << p;
+
+        if (power_count > 1)
+        {
+            std::cout << '^' << power_count;
+        }
+
+        if (n != 1)
+        { 
+            std::cout << " * ";
+        }
+        power_count = 0;
     }
 
-    std::cout << p << '\n';
+    std::cout << '\n';
 
     return 0;
 }
