@@ -1,0 +1,32 @@
+// Name: Christian Elliott
+// File: a02q01.cpp
+
+#include <iostream>
+
+
+int main()
+{
+  int n;
+
+  std::cin >> n;
+
+  //std::cout << n << ' ';
+  while (n != 1)
+	{
+	  std::cout << n << ' ';
+	  if (n % 2 != 0) // if n is odd
+		{
+		  n = (3 * n) + 1;
+		}
+
+	  else  // if n is even 
+		{
+		  n = n / 2;
+		}
+	  //std::cout << n << ' ';
+	}
+
+  std::cout << n << std::endl;
+  
+  return 0;
+}
