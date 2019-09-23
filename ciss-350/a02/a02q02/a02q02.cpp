@@ -4,26 +4,25 @@
 #include <iostream>
 
 
-bool f(int a, int b, int d, int n, int N)
+int f(int n, int a=3, int b=1, int d=2)
 {
-  int i = 0;
-  while (i <= N)
+  if (n % d == 0) // if n is divisible by d
 	{
-	  if (n % d == 0) // if n is divisible by d
-		{
-		  n = n / d;
-		}
-	  else
-		  n = a * n + b;
-	  
-	  ++i;
+	  n = n / d;
 	}
-  if (n != 1)
+
+  else // if n is not divisible by d
 	{
-	  return false;
+	  n = (a * n) + b;
 	}
-  else
-	return true;
+
+  return n;
+}
+
+
+int fs(int * & p, int n, int a=3, int b=1, int d=2)
+{
+  
 }
 
 
@@ -31,13 +30,8 @@ int main()
 {
   int a, b, d, n, N;
   std::cin >> a >> b >> d >> n >> N;
-
-  std::cout << a << ' ' << b << ' ' << d << ' ' << n << ' ' << N << ' ';
-  if(f(a, b, d, n, N))
-	{
-	  std::cout << 
-	}
   
+  // run while loop here that runs f and puts return value into arr[]
   
   return 0;
 }
