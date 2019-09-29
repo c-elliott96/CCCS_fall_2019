@@ -19,13 +19,10 @@
 
 int main()
 {
-  int n, d;
-  std::cin >> n >> d;
-  // Fraction f(n,d);
-  Fraction f(n, d);
-  Fraction g(5, 2);
-  f = g;
-  std::cout << f;
+  Fraction f(1, 7);
+  Fraction g(1, 8);
+  Fraction h = g / f;
+  std::cout << h << '\n';
 
   return 0;
 }

@@ -68,49 +68,49 @@ std::ostream & operator<<(std::ostream & cout, const Fraction & f)
 
   if (d == 1) // if it's n/1 --> print n;
     {
-      cout << n << '\n';
+      cout << n << ' ';
       return cout;
     }
 
   if (d == -1)
     {
-      cout << n * -1 << '\n';
+      cout << n * -1 << ' ';
       return cout;
     }
 
   else if (n == d && d!= 0) // if it's N/N --> print 1;
     {
-      cout << 1 << '\n';
+      cout << 1 << ' ';
       return cout;
     }
 
   else if (n == 0 && d != 0) // if it's 0/d --> print 0;
     {
-      cout << 0 << '\n';
+      cout << 0 << ' ';
       return cout;
     }
 
   else if (d == 0) // if undefined
     {
-      cout << "UNDEFINED" << '\n';
+      cout << "UNDEFINED" << ' ';
       return cout;
     }
 
   else if (n < 0 && d > 1) // if top is neg
     {
-      cout << '-' << n * -1 << '/' << d << '\n';
+      cout << '-' << n * -1 << '/' << d << ' ';
       return cout;
     }
 
   else if (n >= 1 && d < 0) // if bottom is neg
     {
-      cout << '-' << n << '/' << d * -1 << '\n';
+      cout << '-' << n << '/' << d * -1 << ' ';
       return cout;
     }
 
   else
     {
-      cout << n << '/' << d << '\n';
+      cout << n << '/' << d << ' ';
     }
   return cout;
 }
@@ -125,11 +125,47 @@ Fraction & Fraction::operator=(const Fraction & f)
 }
 
 
-Fraction & Fraction::operator+(const Fraction & f, const Fraction & g)
+Fraction & Fraction::operator+(const Fraction & g)
 {
-  this->n_ = (f.n_ * g.d_) + (g.n_ * f.d_);
-  this->d_ = (f.d_ * g.d_);
+  this->n_ = (n_ * g.d_) + (g.n_ * d_);
+  this->d_ = (d_ * g.d_);
 
+  reduce(*this);
+  return (*this);
+}
+
+
+Fraction & Fraction::operator-(const Fraction & g)
+{
+  n_ = (n_ * g.d_) - (g.n_ * d_);
+  d_ = (d_ * g.d_);
+
+  reduce(*this);
+  return (*this);
+}
+
+
+Fraction & Fraction::operator*(const Fraction & f)
+{
+  n_ = n_ * f.n_;
+  d_ = d_ * f.d_;
+
+  reduce(*this);
+  return (*this);
+}
+
+
+Fraction & Fraction::operator/(const Fraction & f)
+{
+  this->n_ = n_ * f.d_;
+  this->d_ = d_ * f.n_;
+  reduce(*this);
+  return (*this);
+}
+
+
+void Fraction::reduce(Fraction & f)
+{
   int n = n_;
   int d = d_;
   int gcd = 1;
@@ -170,5 +206,4 @@ Fraction & Fraction::operator+(const Fraction & f, const Fraction & g)
     }
   n_ = n;
   d_ = d;
-  return (*this);
 }
