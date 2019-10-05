@@ -2805,6 +2805,81 @@ bool game_over(int score)
 
     return true;
 }
+
+
+bool ball_brick_hit(Rect * bricks[], const StarMedium & ball, const int NUM_BRICKS)
+{
+    for (int i = 0; i < NUM_BRICKS; ++i)
+    {
+        if (ball.x >= bricks[i]->x &&
+             ball.x <= bricks[i]->x + bricks[i]->w && 
+             ball.y >= bricks[i]->y && 
+             ball.y <= bricks[i]->y + bricks[i]->h)
+            {
+                std::cout << "collision detected\n";
+                return true;
+            }
+    }
+    return false;
+}
+
+
+void ball_home(StarMedium & ball)
+{
+    ball.x = (W / 2) + (69 / 2);
+    ball.y = H - 101;
+}
+
+
+void move_ball(const Rect & paddle, StarMedium & ball, 
+               Rect * bricks[])
+{
+    // we need:
+    // ball direction moving left or moving right? 
+    // object ball collides with: if the line is vertical, it will 
+    // change the balls L or R direction
+    // if the line is horizontal, we will change its vertical direction
+    // AKA if it's moving North or South
+    // first, let's do a collision function.
+    // if (collision)  what are we changing? 
+    // then go-to move fxn? 
+    const int num_bricks = 30;
+    int x;
+    if (ball_brick_hit(bricks, ball, num_bricks) == true)
+    {
+        ball_home(ball);
+    }
+    if (ball.y <= 0)
+    { 
+        ball.y = 480 - 30;
+    }
+    ball.y -= 1;
+}
+
+void move_paddle(Rect & paddle)
+{
+    Surface surface(W, H);
+    KeyPressed keypressed = get_keypressed();
+    if (keypressed[LEFTARROW])
+    {
+        // move left!
+        if (paddle.x > 0)
+        {
+            paddle.x -= 3;
+        }
+        std::cout << "move left!!\n";
+    }
+    else if (keypressed[RIGHTARROW])
+    {
+        // move right!
+        if (paddle.x < W - paddle.w)
+        {
+            paddle.x += 3;
+        }
+        std::cout << "move right!!\n";
+    }
+}
+
         
 
 void test_bb()
@@ -2855,6 +2930,24 @@ void test_bb()
     //=======================================
     
 
+    //==========Create Ball Obj==============
+    // !! use StarMedium class
+    //=======================================
+    StarMedium ball;
+    ball.x = (W / 2) + (69 / 2);
+    ball.y = H - 101;
+
+
+
+    //=======================================
+    // create paddle obj
+    //=======================================
+    Rect paddle;
+    paddle.x = W / 2;
+    paddle.y = H - 100;
+    paddle.w = 69;
+    paddle.h = 15;    
+
     //=======================================
     // main while loop
     //=======================================
@@ -2874,7 +2967,9 @@ void test_bb()
         {
             ++time_count;
         }
-        
+
+        move_paddle(paddle);  
+        move_ball(paddle, ball, bricks);      
         
         surface.lock();
         surface.fill(BLACK);
@@ -2882,6 +2977,8 @@ void test_bb()
         {
             surface.put_rect(*(bricks[i]), r, g, b);
         }
+        surface.put_rect(paddle, r, g, b);
+        ball.draw(surface);
         surface.unlock();
         surface.flip();
 
@@ -2892,6 +2989,7 @@ void test_bb()
     {
         delete[] bricks[i];
     }
+
     return;
 }    
 
@@ -2970,7 +3068,7 @@ int main(int argc, char* argv[])
     //         break;
     //     }
     // }
-
+    //test_key_up_down();
     test_bb();
     
     

@@ -22,6 +22,7 @@ public:
 		SDL_Rect r = {Sint16(x), Sint16(y), Uint16(w), Uint16(h)};
 		return r;
 	}
+
 	int x, y, w, h;
 
     bool collidesWithLaser(Rect & alien)

@@ -60,6 +60,7 @@ public:
     int x;
     int y;
     int r;
+    int state;
 
     int red;
     int grn;
