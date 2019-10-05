@@ -2831,11 +2831,22 @@ void test_bb()
     //=======================================
     const int NUM_BRICKS = 30;
     Rect * bricks[NUM_BRICKS];
+    int brick_positioner = 0;
     for (int i = 0; i < NUM_BRICKS; ++i)
     {
         bricks[i] = new Rect;
-        bricks[i]->x = 50 + ((i + 1) * 10);
-        bricks[i]->y = 50 + ((i + 1) * 10);
+        if (i < NUM_BRICKS / 2)
+        {   
+            bricks[i]->x = 50 + ((i + 1) * 20);
+            bricks[i]->y = 50; //+ ((i + 1) * 10)
+        }
+        else
+        {
+            bricks[i]->y = 75;
+            bricks[i]->x = 50 + ((brick_positioner + 1) * 20);
+            ++brick_positioner;
+        }
+        
         bricks[i]->w = 15;
         bricks[i]->h = 5;
     }
@@ -2844,6 +2855,9 @@ void test_bb()
     //=======================================
     
 
+    //=======================================
+    // main while loop
+    //=======================================
     while (1)
     {
         if (event.poll() && event.type() == QUIT) break;
@@ -2876,7 +2890,7 @@ void test_bb()
 
     for (int i = 0; i < NUM_BRICKS; ++i)
     {
-        delete [] bricks[i];
+        delete[] bricks[i];
     }
     return;
 }    

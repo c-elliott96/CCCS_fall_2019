@@ -61,16 +61,4 @@ inline std::ostream & operator<<(std::ostream & cout, const Rect & r)
 	cout << "(" << r.x << "," << r.y << "," << r.w << "," << r.h << ")";
 	return cout;
 }
-
-
-
-/* Rect& Rect::operator=(const TestLaser& laser) */
-/* { */
-/*     x = laser.x; */
-/*     y = laser.y; */
-/*     w = laser.w; */
-
-/*     return *this; */
-/* } */
-
 #endif
