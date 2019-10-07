@@ -2824,6 +2824,20 @@ bool ball_brick_hit(Rect * bricks[], const StarMedium & ball, const int NUM_BRIC
 }
 
 
+bool ball_paddle_hit(Rect & paddle, const StarMedium & ball)
+{
+    if (ball.x >= paddle.x &&
+            ball.x <= paddle.x + paddle.w && 
+            ball.y >= paddle.y && 
+            ball.y <= paddle.y + paddle.h)
+        {
+            std::cout << "collision detected\n";
+            return true;
+        }
+    return false;
+}
+
+
 void ball_home(StarMedium & ball)
 {
     ball.x = (W / 2) + (69 / 2);
@@ -2849,11 +2863,21 @@ void move_ball(const Rect & paddle, StarMedium & ball,
     {
         ball_home(ball);
     }
+    if (ball_paddle_hit(paddle, ball) == true)
+    {
+        ball_home(ball);
+    }
     if (ball.y <= 0)
     { 
         ball.y = 480 - 30;
     }
     ball.y -= 1;
+    
+}
+
+
+char ball_direction(const StarMedium & ball)
+{
 }
 
 void move_paddle(Rect & paddle)
@@ -2969,7 +2993,8 @@ void test_bb()
         }
 
         move_paddle(paddle);  
-        move_ball(paddle, ball, bricks);      
+        move_ball(paddle, ball, bricks);
+         
         
         surface.lock();
         surface.fill(BLACK);
