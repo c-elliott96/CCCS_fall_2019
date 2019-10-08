@@ -2807,7 +2807,7 @@ bool game_over(int score)
 }
 
 
-bool ball_brick_hit(Rect * bricks[], const StarMedium & ball, const int NUM_BRICKS)
+bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
 {
     for (int i = 0; i < NUM_BRICKS; ++i)
     {
@@ -2817,6 +2817,23 @@ bool ball_brick_hit(Rect * bricks[], const StarMedium & ball, const int NUM_BRIC
              ball.y <= bricks[i]->y + bricks[i]->h)
             {
                 std::cout << "collision detected\n";
+                if (ball.dx < 0) // ball is moving up and left
+                {
+                    ball.dx = -1;
+                    ball.dy = 1;
+                }
+                else if (ball.dx == 0) // if ball is moving straight up
+                {
+                    ball.dx = 0;
+                    ball.dy = 1;
+                }
+                else // if ball is moving up and right
+                {
+                    ball.dx = 1;
+                    ball.dy = -1;
+                }
+                
+                // CHANGE DIRECTION LOGIC GOES HERE~!~!~!~!
                 return true;
             }
     }
@@ -2824,14 +2841,30 @@ bool ball_brick_hit(Rect * bricks[], const StarMedium & ball, const int NUM_BRIC
 }
 
 
-bool ball_paddle_hit(Rect & paddle, const StarMedium & ball)
+bool ball_paddle_hit(const Rect & paddle, StarMedium & ball)
 {
+    // divide paddle into 3 parts 
+    // int paddle_l = paddle.x;
+    // int paddle_m = paddle.x + (paddle.w / 3);
+    // int paddle_r = paddle.x + (paddle.w * 2 / 3);
+    float paddle_m = paddle.x + (paddle.w / 2);
+    const double paddle_factor = 0.058;
     if (ball.x >= paddle.x &&
             ball.x <= paddle.x + paddle.w && 
             ball.y >= paddle.y && 
             ball.y <= paddle.y + paddle.h)
         {
             std::cout << "collision detected\n";
+            if (ball.x < paddle_m) // ball collides w/ left side of paddle
+            {
+                ball.dx = -1 *((paddle_m - ball.x) * paddle_factor);
+                ball.dy = -1;
+            }
+            if (ball.x > paddle_m)
+            {
+                ball.dx = (ball.x - paddle_m) * paddle_factor;
+                ball.dy = -1;
+            }
             return true;
         }
     return false;
@@ -2842,6 +2875,7 @@ void ball_home(StarMedium & ball)
 {
     ball.x = (W / 2) + (69 / 2);
     ball.y = H - 101;
+    ball.direction = 'n';
 }
 
 
@@ -2859,26 +2893,36 @@ void move_ball(const Rect & paddle, StarMedium & ball,
     // then go-to move fxn? 
     const int num_bricks = 30;
     int x;
-    if (ball_brick_hit(bricks, ball, num_bricks) == true)
-    {
-        ball_home(ball);
-    }
-    if (ball_paddle_hit(paddle, ball) == true)
-    {
-        ball_home(ball);
-    }
+    // if (ball_brick_hit(bricks, ball, num_bricks) == true)
+    // {
+    //     ball_home(ball);
+    // }
+    // if (ball_paddle_hit(paddle, ball) == true)
+    // {
+    //     ball_home(ball);
+    // }
+    ball_brick_hit(bricks, ball, num_bricks);
+    ball_paddle_hit(paddle, ball);
     if (ball.y <= 0)
     { 
-        ball.y = 480 - 30;
+        ball.dy = 1;
     }
-    ball.y -= 1;
-    
+    else if (ball.y >= H)
+    {
+        // implement LOSE LIFE AND RESET FUNCTION and call function here
+    }
+    else if (ball.x <= 0) // ball hits left wall
+    {
+        ball.dx = 1;
+    }
+    else if (ball.x >= W)
+    {
+        ball.dx = -1;
+    }
+    ball.x += ball.dx;
+    ball.y += ball.dy;    
 }
 
-
-char ball_direction(const StarMedium & ball)
-{
-}
 
 void move_paddle(Rect & paddle)
 {

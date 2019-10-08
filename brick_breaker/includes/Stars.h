@@ -49,7 +49,8 @@ class StarMedium
 {
 public:
     StarMedium()
-        : x(rand() % 640), y(rand() % 480), r(2), red(255), grn(255), blu(220)
+        : x(rand() % 640), y(rand() % 480), r(2), red(255), grn(255), 
+        blu(220), dx(0.0), dy(-1.0)
     {}
 
     ~StarMedium(){}
@@ -60,7 +61,9 @@ public:
     int x;
     int y;
     int r;
-    int state;
+    char direction;
+    float dx;
+    float dy;
 
     int red;
     int grn;
