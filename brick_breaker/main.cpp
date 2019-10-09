@@ -2812,9 +2812,9 @@ bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
     for (int i = 0; i < NUM_BRICKS; ++i)
     {
         if (ball.x >= bricks[i]->x &&
-             ball.x <= bricks[i]->x + bricks[i]->w && 
-             ball.y >= bricks[i]->y && 
-             ball.y <= bricks[i]->y + bricks[i]->h)
+            ball.x <= bricks[i]->x + bricks[i]->w && 
+            ball.y >= bricks[i]->y && 
+            ball.y <= bricks[i]->y + bricks[i]->h)
             {
                 std::cout << "collision detected\n";
                 if (ball.dx < 0) // ball is moving up and left
@@ -2832,8 +2832,6 @@ bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
                     ball.dx = 1;
                     ball.dy = -1;
                 }
-                
-                // CHANGE DIRECTION LOGIC GOES HERE~!~!~!~!
                 return true;
             }
     }
@@ -2843,16 +2841,12 @@ bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
 
 bool ball_paddle_hit(const Rect & paddle, StarMedium & ball)
 {
-    // divide paddle into 3 parts 
-    // int paddle_l = paddle.x;
-    // int paddle_m = paddle.x + (paddle.w / 3);
-    // int paddle_r = paddle.x + (paddle.w * 2 / 3);
     float paddle_m = paddle.x + (paddle.w / 2);
     const double paddle_factor = 0.058;
     if (ball.x >= paddle.x &&
-            ball.x <= paddle.x + paddle.w && 
-            ball.y >= paddle.y && 
-            ball.y <= paddle.y + paddle.h)
+        ball.x <= paddle.x + paddle.w && 
+        ball.y >= paddle.y && 
+        ball.y <= paddle.y + paddle.h)
         {
             std::cout << "collision detected\n";
             if (ball.x < paddle_m) // ball collides w/ left side of paddle
@@ -2882,25 +2876,8 @@ void ball_home(StarMedium & ball)
 void move_ball(const Rect & paddle, StarMedium & ball, 
                Rect * bricks[])
 {
-    // we need:
-    // ball direction moving left or moving right? 
-    // object ball collides with: if the line is vertical, it will 
-    // change the balls L or R direction
-    // if the line is horizontal, we will change its vertical direction
-    // AKA if it's moving North or South
-    // first, let's do a collision function.
-    // if (collision)  what are we changing? 
-    // then go-to move fxn? 
     const int num_bricks = 30;
     int x;
-    // if (ball_brick_hit(bricks, ball, num_bricks) == true)
-    // {
-    //     ball_home(ball);
-    // }
-    // if (ball_paddle_hit(paddle, ball) == true)
-    // {
-    //     ball_home(ball);
-    // }
     ball_brick_hit(bricks, ball, num_bricks);
     ball_paddle_hit(paddle, ball);
     if (ball.y <= 0)
@@ -2948,7 +2925,6 @@ void move_paddle(Rect & paddle)
     }
 }
 
-        
 
 void test_bb()
 {
