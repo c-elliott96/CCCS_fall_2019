@@ -151,17 +151,28 @@ void ball_home(StarMedium & ball)
 }
 
 
-void reset_life(Rect & paddle, StarMedium & ball, Rect * bricks[])
+void reset_life(Rect & paddle, StarMedium & ball, Rect * bricks[],
+ bool & new_life, Event & event)
 {
     paddle.x = W / 2;
     paddle.y = H - 100;
-    ball.x = paddle.w / 2;
+    ball.x = paddle.x + (paddle.w / 2);
     ball.y = paddle.y - 1;
+    while(1)
+    {
+        if (event.poll() && event.type() == QUIT) break;
+        KeyPressed keypressed = get_keypressed();
+        if (keypressed[SPACE])
+        {
+            new_life = false;
+            break;
+        }
+    }
 }
 
 
 void move_ball(const Rect & paddle, StarMedium & ball, 
-               Rect * bricks[])
+               Rect * bricks[], bool & new_life)
 {
     //const int num_bricks = 30;
     int x;
@@ -174,6 +185,8 @@ void move_ball(const Rect & paddle, StarMedium & ball,
     else if (ball.y >= H)
     {
         // implement LOSE LIFE AND RESET FUNCTION and call function here
+        new_life = true;
+        ball.dy = -1;
     }
     else if (ball.x <= 0) // ball hits left wall
     {
@@ -452,23 +465,12 @@ void test_bb()
             ++time_count;
         }
 
-        // if (new_life)
-        // {
-        //     reset_life(paddle, ball, bricks);
-        //     while(1)
-        //     {
-        //         if (event.poll() && event.type() == QUIT) break;
-        //         KeyPressed keypressed = get_keypressed();
-        //         if (keypressed[SPACE])
-        //         {   
-        //             break;
-        //             new_life = false;
-        //         }
-        //         delay(10);
-        //     }
-        // }
+        if (new_life)
+        {
+            reset_life(paddle, ball, bricks, new_life, event);
+        }
         move_paddle(paddle);  
-        move_ball(paddle, ball, bricks);
+        move_ball(paddle, ball, bricks, new_life);
          
         
         surface.lock();
