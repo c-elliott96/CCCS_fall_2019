@@ -2817,20 +2817,24 @@ bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
             ball.y <= bricks[i]->y + bricks[i]->h)
             {
                 std::cout << "collision detected\n";
-                if (ball.dx < 0) // ball is moving up and left
+                if (ball.dx < 0 && ball.dy < 0) // ball is moving up and left
                 {
                     ball.dx = -1;
                     ball.dy = 1;
                 }
-                else if (ball.dx == 0) // if ball is moving straight up
+                else if (ball.dx == 0 && ball.dy < 0) // if ball is moving straight up
                 {
                     ball.dx = 0;
                     ball.dy = 1;
                 }
+                else if (ball.dy > 0) // ball is moving down
+                {
+                    ball.dy = -1;
+                }
                 else // if ball is moving up and right
                 {
                     ball.dx = 1;
-                    ball.dy = -1;
+                    ball.dy = 1;
                 }
                 return true;
             }
@@ -2851,14 +2855,15 @@ bool ball_paddle_hit(const Rect & paddle, StarMedium & ball)
             std::cout << "collision detected\n";
             if (ball.x < paddle_m) // ball collides w/ left side of paddle
             {
-                ball.dx = -1 *((paddle_m - ball.x) * paddle_factor);
+                ball.dx = -1 * ((paddle_m - ball.x) * paddle_factor);
                 ball.dy = -1;
             }
             if (ball.x > paddle_m)
             {
-                ball.dx = (ball.x - paddle_m) * paddle_factor;
+                ball.dx = 1 * (ball.x - paddle_m) * paddle_factor;
                 ball.dy = -1;
             }
+            std::cout << ball.dx << ' ' << ball.dy << '\n';
             return true;
         }
     return false;
