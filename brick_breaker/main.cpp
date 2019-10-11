@@ -2814,28 +2814,30 @@ bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
         if (ball.x >= bricks[i]->x &&
             ball.x <= bricks[i]->x + bricks[i]->w && 
             ball.y >= bricks[i]->y && 
-            ball.y <= bricks[i]->y + bricks[i]->h)
+            ball.y <= bricks[i]->y + bricks[i]->h &&
+            bricks[i]->state == true)
             {
                 std::cout << "collision detected\n";
                 if (ball.dx < 0 && ball.dy < 0) // ball is moving up and left
                 {
-                    ball.dx = -1;
+                    //ball.dx = -1;
                     ball.dy = 1;
                 }
                 else if (ball.dx == 0 && ball.dy < 0) // if ball is moving straight up
                 {
-                    ball.dx = 0;
+                    //ball.dx = 0;
                     ball.dy = 1;
                 }
                 else if (ball.dy > 0) // ball is moving down
                 {
                     ball.dy = -1;
                 }
-                else // if ball is moving up and right
+                else if (ball.dy < 0 && ball.dx > 0)// if ball is moving up and right
                 {
-                    ball.dx = 1;
+                    //ball.dx = 1;
                     ball.dy = 1;
                 }
+                bricks[i]->state = false;
                 return true;
             }
     }
@@ -2895,11 +2897,11 @@ void move_ball(const Rect & paddle, StarMedium & ball,
     }
     else if (ball.x <= 0) // ball hits left wall
     {
-        ball.dx = 1;
+        ball.dx *= -1;
     }
     else if (ball.x >= W)
     {
-        ball.dx = -1;
+        ball.dx *= -1;
     }
     ball.x += ball.dx;
     ball.y += ball.dy;    
@@ -2917,7 +2919,6 @@ void move_paddle(Rect & paddle)
         {
             paddle.x -= 3;
         }
-        std::cout << "move left!!\n";
     }
     else if (keypressed[RIGHTARROW])
     {
@@ -2926,7 +2927,154 @@ void move_paddle(Rect & paddle)
         {
             paddle.x += 3;
         }
-        std::cout << "move right!!\n";
+    }
+}
+
+
+void test_bb_welcome()
+{
+    const int W = 640;
+    const int H = 480;
+    Surface surface(W, H);
+    Event event;
+    Font Welcome("fonts/NovaMono-Regular.ttf", 30);
+    int f = rand() % 8;
+    Color font = {98, 114, 64};
+    switch (f) 
+    {
+        case 0:
+            //font = {98, 114, 64};
+            font.r = 98;
+            font.g = 114;
+            font.b = 64;
+            break;
+        case 1:
+            //font = {139, 233, 253};
+            font.r = 139;
+            font.g = 233;
+            font.b = 253;
+            break;
+        case 2:
+            //font = {80, 250, 123};
+            font.r = 80;
+            font.g = 250;
+            font.b = 123;
+            break;
+        case 3:
+            //font = {255, 184, 108};
+            font.r = 255;
+            font.g = 184;
+            font.b = 108;
+            break;
+        case 4:
+            //font = {255, 121, 198};
+            font.r = 255;
+            font.g = 121;
+            font.b = 198;
+            break;
+        case 5:
+            //font = {189, 147, 249};
+            font.r = 189;
+            font.g = 147;
+            font.b = 249;
+            break;
+        case 6:
+            //font = {255, 85, 85};
+            font.r = 255;
+            font.g = 85;
+            font.b = 85;
+            break;
+        case 7:
+            //font = {241, 250, 140};
+            font.r = 241;
+            font.g = 250;
+            font.b = 140;
+            break;
+    }
+    Image * WelcomeImage = new Image(Welcome.render("Welcome to Brick Breaker Neon", 
+                                     font));
+    Rect WelcomeRect = WelcomeImage->getRect();
+    WelcomeRect.x = 50;
+    WelcomeRect.y = 50;
+    int time_count = 0;
+
+    while (1)
+    {
+        if (event.poll() && event.type() == QUIT) break;
+        Image * welcomePtr;
+        if (time_count > 150)
+        {
+            f = rand() % 8;
+            std::cout << f << '\n';
+            switch (f) 
+            {
+                case 0:
+                    //font = {98, 114, 64};
+                    font.r = 98;
+                    font.g = 114;
+                    font.b = 64;
+                    break;
+                case 1:
+                    //font = {139, 233, 253};
+                    font.r = 139;
+                    font.g = 233;
+                    font.b = 253;
+                    break;
+                case 2:
+                    //font = {80, 250, 123};
+                    font.r = 80;
+                    font.g = 250;
+                    font.b = 123;
+                    break;
+                case 3:
+                    //font = {255, 184, 108};
+                    font.r = 255;
+                    font.g = 184;
+                    font.b = 108;
+                    break;
+                case 4:
+                    //font = {255, 121, 198};
+                    font.r = 255;
+                    font.g = 121;
+                    font.b = 198;
+                    break;
+                case 5:
+                    //font = {189, 147, 249};
+                    font.r = 189;
+                    font.g = 147;
+                    font.b = 249;
+                    break;
+                case 6:
+                    //font = {255, 85, 85};
+                    font.r = 255;
+                    font.g = 85;
+                    font.b = 85;
+                    break;
+                case 7:
+                    //font = {241, 250, 140};
+                    font.r = 241;
+                    font.g = 250;
+                    font.b = 140;
+                    break;
+            }
+            //delete WelcomeImage;
+            WelcomeImage = new Image(Welcome.render("Welcome to Brick Breaker Neon", 
+                                     font));
+            //WelcomeImage.image = Welcome.render("Welcome to Brick Breaker Neon", font);
+            time_count = 0;
+        }
+        else
+        {
+            ++time_count;
+        }
+
+        surface.lock();
+        surface.fill(BLACK);
+        surface.put_image(*WelcomeImage, WelcomeRect);
+        surface.unlock();
+        surface.flip();
+
+        delay(10);
     }
 }
 
@@ -2937,13 +3085,8 @@ void test_bb()
     const int H = 480;
     Surface surface(W, H);
     Event event;
-    Rect rect1;
     Color c;
     c = WHITE;
-    rect1.x = rand() % W;
-    rect1.y = rand() % H;
-    rect1.w = 15;
-    rect1.h = 5;
     int r, g, b;
     r = rand() % 256;
     g = rand() % 256;
@@ -3005,8 +3148,6 @@ void test_bb()
         if (event.poll() && event.type() == QUIT) break;
         if (time_count > 300)
         {
-            rect1.x = rand() % W;
-            rect1.y = rand() % H;
             r = rand() % 256;
             g = rand() % 256;
             b = rand() % 256;
@@ -3025,7 +3166,10 @@ void test_bb()
         surface.fill(BLACK);
         for (int i = 0; i < NUM_BRICKS; ++i)
         {
-            surface.put_rect(*(bricks[i]), r, g, b);
+            if (bricks[i]->state == true)
+            {
+                surface.put_rect(*(bricks[i]), r, g, b);
+            }
         }
         surface.put_rect(paddle, r, g, b);
         ball.draw(surface);
@@ -3119,6 +3263,7 @@ int main(int argc, char* argv[])
     //     }
     // }
     //test_key_up_down();
+    test_bb_welcome();
     test_bb();
     
     

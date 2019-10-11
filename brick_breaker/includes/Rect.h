@@ -12,7 +12,7 @@ class Rect
 {
 public:
 	Rect(int x0 = 0, int y0 = 0, int w0 = 0, int h0 = 0)
-		: x(x0), y(y0), w(w0), h(h0)
+		: x(x0), y(y0), w(w0), h(h0), state(1)
 	{}
     Rect( const SDL_Rect & r)
 		: x(r.x), y(r.y), w(r.w), h(r.h)
@@ -24,6 +24,7 @@ public:
 	}
 
 	int x, y, w, h;
+    bool state;
 
     bool collidesWithLaser(Rect & alien)
     {

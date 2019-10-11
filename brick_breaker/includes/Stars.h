@@ -58,12 +58,12 @@ public:
     void move();
     void draw(Surface &);
     
-    int x;
-    int y;
+    double x;
+    double y;
     int r;
     char direction;
-    float dx;
-    float dy;
+    double dx;
+    double dy;
 
     int red;
     int grn;
