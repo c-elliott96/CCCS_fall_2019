@@ -77,6 +77,16 @@ if you don't yield some time.
 
 
 const int NUM_BRICKS = 50;
+const int W = 640;
+const int H = 480;
+// const int W = 740;
+// const int H = 580;
+// const int W = 940;
+// const int H = 780;
+
+// const int W = 1980;
+// const int H = 1020;
+
 
 bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
 {
@@ -210,7 +220,7 @@ void move_paddle(Rect & paddle)
         // move left!
         if (paddle.x > 0)
         {
-            paddle.x -= 3;
+            paddle.x -= 4;
         }
     }
     else if (keypressed[RIGHTARROW])
@@ -218,7 +228,7 @@ void move_paddle(Rect & paddle)
         // move right!
         if (paddle.x < W - paddle.w)
         {
-            paddle.x += 3;
+            paddle.x += 4;
         }
     }
 }
@@ -226,8 +236,8 @@ void move_paddle(Rect & paddle)
 
 void test_bb_welcome()
 {
-    const int W = 640;
-    const int H = 480;
+    // const int W = 640;
+    // const int H = 480;
     Surface surface(W, H);
     Event event;
     Font Welcome("fonts/NovaMono-Regular.ttf", 30);
@@ -374,7 +384,7 @@ void test_bb_welcome()
         }
 
         surface.lock();
-        surface.fill(BLACK);
+        surface.fill(BACKGROUND);
         surface.put_image(*WelcomeImage, WelcomeRect);
         surface.put_image(*SpaceImage, WelcomeSpaceRect);
         surface.unlock();
@@ -387,8 +397,8 @@ void test_bb_welcome()
 
 void test_bb()
 {
-    const int W = 640;
-    const int H = 480;
+    // const int W = 640;
+    // const int H = 480;
     Surface surface(W, H);
     Event event;
     Color c;
@@ -473,7 +483,7 @@ void test_bb()
          
         
         surface.lock();
-        surface.fill(BLACK);
+        surface.fill(BACKGROUND);
         for (int i = 0; i < NUM_BRICKS; ++i)
         {
             if (bricks[i]->state == true)

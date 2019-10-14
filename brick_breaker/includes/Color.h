@@ -26,6 +26,7 @@ const Color DARKGRAY = { 50,  50,  50, 0};
 const Color YELLOW   = {231, 228,  13, 0};
 const Color CYAN     = {  0, 255, 255, 0};
 const Color ORANGE   = {255, 114,   0, 0};
+const Color BACKGROUND = {40, 42, 54, 0};
 
 
 inline Color rand_color()
