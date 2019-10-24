@@ -162,8 +162,15 @@ void ball_home(StarMedium & ball)
 
 
 void reset_life(Rect & paddle, StarMedium & ball, Rect * bricks[],
- bool & new_life, Event & event)
+                bool & new_life, Event & event, 
+                const int NUM_BRICKS, Surface & surface)
 {
+    Color c;
+    c = WHITE;
+    int r, g, b;
+    r = rand() % 256;
+    g = rand() % 256;
+    b = rand() % 256;
     paddle.x = W / 2;
     paddle.y = H - 100;
     ball.x = paddle.x + (paddle.w / 2);
@@ -177,6 +184,22 @@ void reset_life(Rect & paddle, StarMedium & ball, Rect * bricks[],
             new_life = false;
             break;
         }
+
+        surface.lock();
+        surface.fill(BACKGROUND);
+        for (int i = 0; i < NUM_BRICKS; ++i)
+        {
+            if (bricks[i]->state == true)
+            {
+                surface.put_rect(*(bricks[i]), r, g, b);
+            }
+        }
+        surface.put_rect(paddle, r, g, b);
+        ball.draw(surface);
+        surface.unlock();
+        surface.flip();
+
+        delay(10);
     }
 }
 
@@ -395,6 +418,32 @@ void test_bb_welcome()
 }
 
 
+Image * render_lives(int num_lives, FontImage & livesFont)
+{
+    Color font = {255, 255, 255};
+    char lives[10] = {'3'};
+    switch (num_lives)
+    {
+        case 0:
+            lives[0] = '0';
+            break;
+        case 1:
+            lives[0] = '1';
+            break;
+        case 2:
+            lives[0] = '2';
+            break;
+        case 3:
+            lives[0] = '3';
+            break;
+    }
+    Image * livesImage = new Image(livesFont.render(lives, font));
+    Rect livesRect = livesImage->getRect();  
+    //return livesFont;  
+    return livesImage;
+}
+
+
 void test_bb()
 {
     // const int W = 640;
@@ -408,7 +457,7 @@ void test_bb()
     g = rand() % 256;
     b = rand() % 256;
     int time_count = 0;
-    bool new_life = true;
+    bool new_life = false;
 
     //=======================================
     // create my bricks!
@@ -456,9 +505,16 @@ void test_bb()
     paddle.w = 69;
     paddle.h = 15;    
 
+
+    FontImage livesFont("fonts/NovaMono-Regular.ttf", 20);
+    livesFont.rect.x = 20;
+    livesFont.rect.y = H - 50;
+
+    int num_lives = 3;
     //=======================================
     // main while loop
     //=======================================
+
     while (1)
     {
         if (event.poll() && event.type() == QUIT) break;
@@ -476,12 +532,13 @@ void test_bb()
 
         if (new_life)
         {
-            reset_life(paddle, ball, bricks, new_life, event);
+            --num_lives;
+            reset_life(paddle, ball, bricks, new_life, event, 
+            NUM_BRICKS, surface);
         }
         move_paddle(paddle);  
         move_ball(paddle, ball, bricks, new_life);
-         
-        
+        render_lives(num_lives, livesFont);
         surface.lock();
         surface.fill(BACKGROUND);
         for (int i = 0; i < NUM_BRICKS; ++i)
@@ -492,6 +549,9 @@ void test_bb()
             }
         }
         surface.put_rect(paddle, r, g, b);
+        surface.put_rect(livesFont.rect, r, g, b);
+        surface.put_image(*render_lives(num_lives, livesFont), 
+                            livesFont.rect);
         ball.draw(surface);
         surface.unlock();
         surface.flip();

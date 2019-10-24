@@ -23,6 +23,7 @@ This header file also contains some useful inline functions derived from SDL.
 #include "Color.h"
 #include "Sound.h"
 #include "Font.h"
+#include "FontImage.h"
 #include "Stars.h"
 #include "Usership.h"
 #include "Aliens.h"
