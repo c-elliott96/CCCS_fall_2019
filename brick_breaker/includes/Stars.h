@@ -49,7 +49,7 @@ class StarMedium
 {
 public:
     StarMedium()
-        : x(rand() % 640), y(rand() % 480), r(2), red(255), grn(255), 
+        : x(rand() % 640), y(rand() % 480), r(3), red(255), grn(255), 
         blu(220), dx(0.0), dy(-1.0)
     {}
 

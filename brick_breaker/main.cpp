@@ -1,6 +1,6 @@
 /****************************************************************************
- Yihsiang Liow
- Copyright
+ By Christian Elliott
+ Library created by Dr. Liow, CCCS 
  ****************************************************************************/
 #include <iostream>
 #include <cmath>
@@ -11,13 +11,15 @@
 #include <cmath>
 #include <cstdlib>
 #include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "Includes.h"
 #include "Constants.h"
 #include "compgeom.h"
 #include "Surface.h"
 #include "Event.h"
-#include <stdio.h>
+
 
 /*****************************************************************************
 This is a short introduction to graphics, animation, sound, music, keyboard
@@ -76,9 +78,11 @@ if you don't yield some time.
 *****************************************************************************/
 
 
-const int NUM_BRICKS = 50;
+int NUM_BRICKS = 10;
 const int W = 640;
 const int H = 480;
+int SCORE = 0;
+int LEVEL = 0;
 // const int W = 740;
 // const int H = 580;
 // const int W = 940;
@@ -86,6 +90,65 @@ const int H = 480;
 
 // const int W = 1980;
 // const int H = 1020;
+
+
+/* A utility function to reverse a string  */
+void reverse(char str[], int length) 
+{ 
+    int start = 0; 
+    int end = length -1; 
+    while (start < end) 
+    { 
+        //swap(*(str+start), *(str+end)); 
+        char t = *(str+start);
+        str[start] = *(str+end);
+        str[end]= t;
+        start++; 
+        end--; 
+    } 
+} 
+  
+// Implementation of itoa() 
+char* itoa(int num, char* str, int base) 
+{ 
+    int i = 0; 
+    bool isNegative = false; 
+  
+    /* Handle 0 explicitely, otherwise empty string is printed for 0 */
+    if (num == 0) 
+    { 
+        str[i++] = '0'; 
+        str[i] = '\0'; 
+        return str; 
+    } 
+  
+    // In standard itoa(), negative numbers are handled only with  
+    // base 10. Otherwise numbers are considered unsigned. 
+    if (num < 0 && base == 10) 
+    { 
+        isNegative = true; 
+        num = -num; 
+    } 
+  
+    // Process individual digits 
+    while (num != 0) 
+    { 
+        int rem = num % base; 
+        str[i++] = (rem > 9)? (rem-10) + 'a' : rem + '0'; 
+        num = num/base; 
+    } 
+  
+    // If number is negative, append '-' 
+    if (isNegative) 
+        str[i++] = '-'; 
+  
+    str[i] = '\0'; // Append string terminator 
+  
+    // Reverse the string 
+    reverse(str, i); 
+  
+    return str; 
+} 
 
 
 bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
@@ -101,24 +164,22 @@ bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
                 std::cout << "collision detected\n";
                 if (ball.dx < 0 && ball.dy < 0) // ball is moving up and left
                 {
-                    //ball.dx = -1;
-                    ball.dy = 1;
+                    ball.dy = 1.25;
                 }
                 else if (ball.dx == 0 && ball.dy < 0) // if ball is moving straight up
                 {
-                    //ball.dx = 0;
-                    ball.dy = 1;
+                    ball.dy = 1.25;
                 }
                 else if (ball.dy > 0) // ball is moving down
                 {
-                    ball.dy = -1;
+                    ball.dy = -1.25;
                 }
                 else if (ball.dy < 0 && ball.dx > 0)// if ball is moving up and right
                 {
-                    //ball.dx = 1;
-                    ball.dy = 1;
+                    ball.dy = 1.25;
                 }
                 bricks[i]->state = false;
+                SCORE += 10;
                 return true;
             }
     }
@@ -136,15 +197,15 @@ bool ball_paddle_hit(const Rect & paddle, StarMedium & ball)
         ball.y <= paddle.y + paddle.h)
         {
             std::cout << "collision detected\n";
-            if (ball.x < paddle_m) // ball collides w/ left side of paddle
+            if (ball.x <= paddle_m) // ball collides w/ left side of paddle
             {
                 ball.dx = -1 * ((paddle_m - ball.x) * paddle_factor);
-                ball.dy = -1;
+                ball.dy = -1.25;
             }
             if (ball.x > paddle_m)
             {
                 ball.dx = 1 * (ball.x - paddle_m) * paddle_factor;
-                ball.dy = -1;
+                ball.dy = -1.25;
             }
             std::cout << ball.dx << ' ' << ball.dy << '\n';
             return true;
@@ -213,21 +274,21 @@ void move_ball(const Rect & paddle, StarMedium & ball,
     ball_paddle_hit(paddle, ball);
     if (ball.y <= 0)
     { 
-        ball.dy = 1;
+        ball.dy = 1.0;
     }
     else if (ball.y >= H)
     {
         // implement LOSE LIFE AND RESET FUNCTION and call function here
         new_life = true;
-        ball.dy = -1;
+        ball.dy = -1.0;
     }
     else if (ball.x <= 0) // ball hits left wall
     {
-        ball.dx *= -1;
+        ball.dx *= -1.0;
     }
     else if (ball.x >= W)
     {
-        ball.dx *= -1;
+        ball.dx *= -1.0;
     }
     ball.x += ball.dx;
     ball.y += ball.dy;    
@@ -263,7 +324,7 @@ void test_bb_welcome()
     // const int H = 480;
     Surface surface(W, H);
     Event event;
-    Font Welcome("fonts/NovaMono-Regular.ttf", 30);
+    Font Welcome("fonts/NovaMono-Regular.ttf", 33);
     int f = rand() % 8;
     Color font = {98, 114, 64};
     switch (f) 
@@ -317,22 +378,32 @@ void test_bb_welcome()
             font.b = 140;
             break;
     }
-    Image * WelcomeImage = new Image(Welcome.render("Welcome to Brick Breaker Neon", 
-                                     font));
-    Rect WelcomeRect = WelcomeImage->getRect();
-    WelcomeRect.x = 50;
-    WelcomeRect.y = 50;
+    //Image * WelcomeImage = new Image(Welcome.render("Welcome to Brick Breaker Neon", 
+    //                                 font));
+    // Rect WelcomeRect = WelcomeImage->getRect();
+    // WelcomeRect.x = 50;
+    // WelcomeRect.y = 50;
     int time_count = 0;
 
-    Font WelcomeSpace("fonts/NovaMono-Regular.ttf", 15);
-    Image * SpaceImage = new Image(WelcomeSpace.render("Please Press SPACE to Continue", font));
-    Rect WelcomeSpaceRect = SpaceImage->getRect();
-    WelcomeSpaceRect.x = 50;
-    WelcomeSpaceRect.y = 150;
+    Font WelcomeSpace("fonts/NovaMono-Regular.ttf", 17);
+    //Image * SpaceImage = new Image(WelcomeSpace.render("Please Press SPACE to Continue", font));
+    // Rect WelcomeSpaceRect = SpaceImage->getRect();
+    // WelcomeSpaceRect.x = W / 2 - 50;
+    // WelcomeSpaceRect.y = H - 100;
     while (1)
     {
         if (event.poll() && event.type() == QUIT) break;
-        Image * welcomePtr;
+
+        Image WelcomeImage(Welcome.render("Welcome to Brick Breaker Neon", font));
+        Rect WelcomeRect = WelcomeImage.getRect();
+        WelcomeRect.x = 50;
+        WelcomeRect.y = 50;
+
+        Image SpaceImage(WelcomeSpace.render("Please Press SPACE to Continue", font));
+        Rect WelcomeSpaceRect = SpaceImage.getRect();
+        WelcomeSpaceRect.x = W / 2 - 50;
+        WelcomeSpaceRect.y = H - 100;
+        
         if (time_count > 150)
         {
             f = rand() % 8;
@@ -389,10 +460,8 @@ void test_bb_welcome()
                     break;
             }
             //delete WelcomeImage;
-            WelcomeImage = new Image(Welcome.render("Welcome to Brick Breaker Neon", 
-                                     font));
-            SpaceImage = new Image(WelcomeSpace.render("Please Press SPACE to Continue", font));;
-            //WelcomeImage.image = Welcome.render("Welcome to Brick Breaker Neon", font);
+            
+
             time_count = 0;
         }
         else
@@ -408,8 +477,8 @@ void test_bb_welcome()
 
         surface.lock();
         surface.fill(BACKGROUND);
-        surface.put_image(*WelcomeImage, WelcomeRect);
-        surface.put_image(*SpaceImage, WelcomeSpaceRect);
+        surface.put_image(WelcomeImage, WelcomeRect);
+        surface.put_image(SpaceImage, WelcomeSpaceRect);
         surface.unlock();
         surface.flip();
 
@@ -444,6 +513,17 @@ Image * render_lives(int num_lives, FontImage & livesFont)
 }
 
 
+Image * render_score(int SCORE, FontImage & scoreFont)
+{
+    // convert our int SCORE to a string or a char ??
+    Color font {255, 255, 255};
+    char score[10];
+    Image * scoreImage = new Image(scoreFont.render((itoa(SCORE, score, 10)), font));
+    Rect scoreRect = scoreImage->getRect();
+    return scoreImage;
+}
+
+
 void test_bb()
 {
     // const int W = 640;
@@ -468,7 +548,7 @@ void test_bb()
     for (int i = 0; i < NUM_BRICKS; ++i)
     {
         bricks[i] = new Rect;
-        if (i < NUM_BRICKS / 2)
+        if (i < NUM_BRICKS / 2 + LEVEL)
         {   
             bricks[i]->x = 50 + ((i + 1) * 20);
             bricks[i]->y = 50; //+ ((i + 1) * 10)
@@ -510,10 +590,15 @@ void test_bb()
     livesFont.rect.x = 20;
     livesFont.rect.y = H - 50;
 
+    FontImage scoreFont("fonts/NovaMono-Regular.ttf", 20);
+    scoreFont.rect.x = W - 70;
+    scoreFont.rect.y = H - 50;
+
     int num_lives = 3;
     //=======================================
     // main while loop
     //=======================================
+    bool level_up = true;
 
     while (1)
     {
@@ -546,12 +631,20 @@ void test_bb()
             if (bricks[i]->state == true)
             {
                 surface.put_rect(*(bricks[i]), r, g, b);
+                level_up = false;
+            }
+            if (level_up)
+            {
+                ++LEVEL;
+                NUM_BRICKS += 25;
             }
         }
         surface.put_rect(paddle, r, g, b);
         surface.put_rect(livesFont.rect, r, g, b);
         surface.put_image(*render_lives(num_lives, livesFont), 
                             livesFont.rect);
+        surface.put_image(*render_score(SCORE, scoreFont),
+                            scoreFont.rect);
         ball.draw(surface);
         surface.unlock();
         surface.flip();
