@@ -76,9 +76,19 @@ other programs time to run. Otherwise this program will take up all the CPU,
 making the computer unresponsive. You might have problems closing this program
 if you don't yield some time.
 *****************************************************************************/
+template < typename x >
+std::ostream &operator<<(std::ostream &cout, std::vector < x > arr)
+{
+    for (int i = 0; i < arr.size(); ++i)
+    {
+        cout << arr[i] << ',';
+        if (i % 10 == 0) cout << '\n';
+    }
+    return cout;
+}   
 
 
-int NUM_BRICKS = 10;
+int NUM_BRICKS = 50;
 const int W = 640;
 const int H = 480;
 int SCORE = 0;
@@ -151,15 +161,15 @@ char* itoa(int num, char* str, int base)
 } 
 
 
-bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
+bool ball_brick_hit(std::vector < Rect > &bricks, StarMedium & ball, const int NUM_BRICKS)
 {
     for (int i = 0; i < NUM_BRICKS; ++i)
     {
-        if (ball.x >= bricks[i]->x &&
-            ball.x <= bricks[i]->x + bricks[i]->w && 
-            ball.y >= bricks[i]->y && 
-            ball.y <= bricks[i]->y + bricks[i]->h &&
-            bricks[i]->state == true)
+        if (ball.x >= bricks[i].x &&
+            ball.x <= bricks[i].x + bricks[i].w && 
+            ball.y >= bricks[i].y && 
+            ball.y <= bricks[i].y + bricks[i].h &&
+            bricks[i].state == true)
             {
                 std::cout << "collision detected\n";
                 if (ball.dx < 0 && ball.dy < 0) // ball is moving up and left
@@ -178,7 +188,7 @@ bool ball_brick_hit(Rect * bricks[], StarMedium & ball, const int NUM_BRICKS)
                 {
                     ball.dy = 1.25;
                 }
-                bricks[i]->state = false;
+                bricks[i].state = false;
                 SCORE += 10;
                 return true;
             }
@@ -222,7 +232,7 @@ void ball_home(StarMedium & ball)
 }
 
 
-void reset_life(Rect & paddle, StarMedium & ball, Rect * bricks[],
+void reset_life(Rect & paddle, StarMedium & ball, const std::vector < Rect > &bricks,
                 bool & new_life, Event & event, 
                 const int NUM_BRICKS, Surface & surface)
 {
@@ -250,9 +260,9 @@ void reset_life(Rect & paddle, StarMedium & ball, Rect * bricks[],
         surface.fill(BACKGROUND);
         for (int i = 0; i < NUM_BRICKS; ++i)
         {
-            if (bricks[i]->state == true)
+            if (bricks[i].state == true)
             {
-                surface.put_rect(*(bricks[i]), r, g, b);
+                surface.put_rect(bricks[i], r, g, b);
             }
         }
         surface.put_rect(paddle, r, g, b);
@@ -266,7 +276,7 @@ void reset_life(Rect & paddle, StarMedium & ball, Rect * bricks[],
 
 
 void move_ball(const Rect & paddle, StarMedium & ball, 
-               Rect * bricks[], bool & new_life)
+               std::vector < Rect > & bricks, bool & new_life)
 {
     //const int num_bricks = 30;
     int x;
@@ -487,7 +497,7 @@ void test_bb_welcome()
 }
 
 
-Image * render_lives(int num_lives, FontImage & livesFont)
+Image render_lives(int num_lives, FontImage & livesFont)
 {
     Color font = {255, 255, 255};
     char lives[10] = {'3'};
@@ -506,21 +516,43 @@ Image * render_lives(int num_lives, FontImage & livesFont)
             lives[0] = '3';
             break;
     }
-    Image * livesImage = new Image(livesFont.render(lives, font));
-    Rect livesRect = livesImage->getRect();  
-    //return livesFont;  
+    // Image * livesImage = new Image(livesFont.render(lives, font));
+
+    Image livesImage(livesFont.render(lives, font));
+    //Rect livesRect = livesImage->getRect();
     return livesImage;
 }
 
 
-Image * render_score(int SCORE, FontImage & scoreFont)
+Image render_score(int SCORE, FontImage & scoreFont)
 {
     // convert our int SCORE to a string or a char ??
     Color font {255, 255, 255};
     char score[10];
-    Image * scoreImage = new Image(scoreFont.render((itoa(SCORE, score, 10)), font));
-    Rect scoreRect = scoreImage->getRect();
+    //Image * scoreImage = new Image(scoreFont.render((itoa(SCORE, score, 10)), font));
+    Image scoreImage(scoreFont.render((itoa(SCORE, score, 10)), font));
+    //Rect scoreRect = scoreImage->getRect();
     return scoreImage;
+}
+
+
+void reset_level(std::vector < Rect > &bricks)
+{
+    for (int i = 0; i < NUM_BRICKS; ++i)
+    {
+        bricks[i].state = true;
+    }
+}
+
+
+void init_new_bricks(std::vector < Rect > &bricks, int NUM_BRICKS)
+{
+    // upon advancing a level, we want to expand our Rect * array by 25
+    
+    // for (int i = 0; i < NUM_BRICKS; ++i)
+    // {
+    //     bricks[i]
+    // }
 }
 
 
@@ -543,31 +575,36 @@ void test_bb()
     // create my bricks!
     //=======================================
     //const int NUM_BRICKS = 30;
-    Rect * bricks[NUM_BRICKS];
+    //Rect * bricks[NUM_BRICKS];
+    std::vector < Rect > bricks;
+
     int brick_positioner = 0;
+
     for (int i = 0; i < NUM_BRICKS; ++i)
     {
-        bricks[i] = new Rect;
+        Rect temp(0,0,15,5);
+        bricks.push_back(temp);
         if (i < NUM_BRICKS / 2 + LEVEL)
         {   
-            bricks[i]->x = 50 + ((i + 1) * 20);
-            bricks[i]->y = 50; //+ ((i + 1) * 10)
+            bricks[i].x = 50 + ((i + 1) * 20);
+            bricks[i].y = 50; //+ ((i + 1) * 10)
         }
         else
         {
-            bricks[i]->y = 75;
-            bricks[i]->x = 50 + ((brick_positioner + 1) * 20);
+            bricks[i].y = 75;
+            bricks[i].x = 50 + ((brick_positioner + 1) * 20);
             ++brick_positioner;
         }
         
-        bricks[i]->w = 15;
-        bricks[i]->h = 5;
+        //bricks[i].w = 15;
+        //bricks[i].h = 5;
     }
+    std::cout << bricks << std::endl;
+
     //=======================================
     // end init bricks
     //=======================================
     
-
     //==========Create Ball Obj==============
     // !! use StarMedium class
     //=======================================
@@ -628,34 +665,40 @@ void test_bb()
         surface.fill(BACKGROUND);
         for (int i = 0; i < NUM_BRICKS; ++i)
         {
-            if (bricks[i]->state == true)
+            if (bricks[i].state == true)  // state == true means the brick is 'alive'
             {
-                surface.put_rect(*(bricks[i]), r, g, b);
+                surface.put_rect(bricks[i], r, g, b);
                 level_up = false;
             }
-            if (level_up)
+        }
+        if (level_up)
             {
+                std::cout << "in level up\n";
                 ++LEVEL;
                 NUM_BRICKS += 25;
+                init_new_bricks(bricks, NUM_BRICKS);
+                reset_level(bricks);
             }
-        }
+
         surface.put_rect(paddle, r, g, b);
         surface.put_rect(livesFont.rect, r, g, b);
-        surface.put_image(*render_lives(num_lives, livesFont), 
+        surface.put_image(render_lives(num_lives, livesFont), 
                             livesFont.rect);
-        surface.put_image(*render_score(SCORE, scoreFont),
+        surface.put_image(render_score(SCORE, scoreFont),
                             scoreFont.rect);
         ball.draw(surface);
         surface.unlock();
         surface.flip();
 
         delay(10);
+        level_up = true;        
     }
 
-    for (int i = 0; i < NUM_BRICKS; ++i)
-    {
-        delete[] bricks[i];
-    }
+    // for (int i = 0; i < NUM_BRICKS; ++i)
+    // {
+    //     delete[] bricks[i];
+    // }
+    
 
     return;
 }    
