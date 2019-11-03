@@ -599,7 +599,7 @@ void test_bb()
         //bricks[i].w = 15;
         //bricks[i].h = 5;
     }
-    std::cout << bricks << std::endl;
+    //std::cout << bricks << std::endl;
 
     //=======================================
     // end init bricks
