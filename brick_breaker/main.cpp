@@ -14,11 +14,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Includes.h"
-#include "Constants.h"
-#include "compgeom.h"
-#include "Surface.h"
-#include "Event.h"
+#include "includes/Includes.h"
+#include "includes/Constants.h"
+#include "includes/compgeom.h"
+#include "includes/Surface.h"
+#include "includes/Event.h"
 
 
 /*****************************************************************************
@@ -545,14 +545,16 @@ void reset_level(std::vector < Rect > &bricks)
 }
 
 
-void init_new_bricks(std::vector < Rect > &bricks, int NUM_BRICKS)
+void init_new_bricks(std::vector < Rect > &bricks, int &NUM_BRICKS, int LEVEL)
 {
-    // upon advancing a level, we want to expand our Rect * array by 25
-    
-    // for (int i = 0; i < NUM_BRICKS; ++i)
-    // {
-    //     bricks[i]
-    // }
+    // H = 480;
+    // W = 640;
+    NUM_BRICKS += 25;
+    int rows = LEVEL + 2;
+    for (int i = 0; i < rows; ++i)
+    {
+        
+    }
 }
 
 
