@@ -18,7 +18,7 @@ public:
 	{}
 	SDL_Rect getSDL_Rect()
 	{
-		SDL_Rect r = {x, y, w, h};
+		SDL_Rect r = {Sint16(x), Sint16(y), Uint16(w), Uint16(h)};
 		return r;
 	}
 	int x, y, w, h;

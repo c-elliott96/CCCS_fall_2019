@@ -1116,6 +1116,9 @@ void test_gamepad()
 }
 
 
+
+
+
 void quadtree()
 {
   int Wx = 800;
@@ -1127,6 +1130,8 @@ void quadtree()
   int y = rand() % Hy;
   int w = 2;
   int h = 2;
+  int dx;
+  int dy;
   std::vector< Rect * > objs;
   
   while(objs.size() < 1000)
@@ -1135,7 +1140,9 @@ void quadtree()
       y = rand() % Hy;
       w = 1;
       h = 1;
-      Rect * rect_ = new Rect(x,y,w,h);
+      dx = (rand() % 3) - 1;
+      dy = (rand() % 3) - 1;
+      Rect * rect_ = new Rect(x,y,w,h,dx,dy);
       objs.push_back(rect_);
     }
 
@@ -1157,6 +1164,27 @@ void quadtree()
 	{
 	  surface.put_rect(objs[i]->x, objs[i]->y, objs[i]->w,
 			   objs[i]->h, 255, 255, 255);
+
+	  if (objs[i]->x <= 1)
+	    {
+	      objs[i]->dx *= -1;
+	    }
+	  if (objs[i]->x >= Wx - 1)
+	    {
+	      objs[i]->dx *= -1;
+	    }
+	  if (objs[i]->y <= 1)
+	    {
+	      objs[i]->dy *= -1;
+	    }
+	  if (objs[i]->y >= Hy - 1)
+	    {
+	      objs[i]->dy *= -1;
+	    }
+
+	  objs[i]->x += objs[i]->dx;
+	  objs[i]->y += objs[i]->dy;
+	  
 	  std::cout << "i = " << i << ' '
 		    << objs[i]->x << ' ' << objs[i]->y << '\n';
 	  ++i;
