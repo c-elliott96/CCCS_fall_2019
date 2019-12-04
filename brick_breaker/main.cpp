@@ -678,7 +678,7 @@ void test_bb()
                 std::cout << "in level up\n";
                 ++LEVEL;
                 NUM_BRICKS += 25;
-                init_new_bricks(bricks, NUM_BRICKS);
+                //init_new_bricks(bricks, NUM_BRICKS);
                 reset_level(bricks);
             }
 
