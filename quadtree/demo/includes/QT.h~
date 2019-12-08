@@ -1,0 +1,44 @@
+#ifndef QT_H
+#define QT_H
+
+#include <iostream>
+#include <vector>
+
+class QT
+{
+
+}
+
+
+class Point
+{
+ public:
+  int x;
+  int y;
+
+  Point()
+    {
+      x = 0;
+      y = 0;
+    }
+
+  Point(int x_, int y_)
+    {
+      x = x_;
+      y = y_;
+    }
+}
+
+
+class QTNode
+{
+ public:
+
+  Point * topLeft;
+  Point * topRight;
+  int depth;
+  int max_depth;
+  int threshold;
+  std::vector< Point * > objs;
+  
+}

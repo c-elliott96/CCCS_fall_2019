@@ -1195,6 +1195,152 @@ void quadtree()
     }
 }
 
+
+// void qt_2()
+// {
+//   const int THRESHOLD = 5;
+  
+//   struct point
+//   {
+//     int x;
+//     int y;
+//     point(int _x, int _y)
+//       {
+// 	x = _x;
+// 	y = _y;
+//       }
+//     point()
+//       {
+// 	x = 0;
+// 	y = 0;
+//       }
+//   };
+
+//   struct node
+//   {
+//     point pos;
+//     int data;
+//     node(point _pos, int _data)
+//     {
+//       pos = _pos;
+//       data = _data;
+//     }
+//     node()
+//     {
+//       data = 0;
+//     }
+//   };
+
+//   class quad    // main quadtree class
+//   {
+//     // holds details of the boundary of this node
+//     point topLeft;
+//     point botRight;
+
+//     // contains details of this node
+//     node *n;
+
+//     // children of this node if created
+//     quad *topLeftTree;
+//     quad *topRightTree;
+//     quad *botLeftTree;
+//     quad *botRightTree;
+
+//   public:
+//     quad()
+//     {
+//       topLeft = point(0, 0);
+//       botRight = point(0, 0);
+//       n = NULL;
+//       topLeftTree = NULL;
+//       topRightTree = NULL;
+//       botLeftTree = NULL;
+//       botRightTree = NULL;
+//     }
+//     quad(point topL, point botR)
+//     {
+//       n = NULL;
+//       topLeftTree = NULL;
+//       topRightTree = NULL;
+//       botLeftTree = NULL;
+//       botRightTree = NULL;
+//       topLeft = topL;
+//       botRight = botR;
+//     }
+//     void insert(node*);
+//     Node * search(point);
+//     bool inBoundary(point);
+//   };
+
+
+//   void quad::insert(node * newNode)
+//   {
+//     if (newNode == NULL)
+//       return;
+
+//     if(!inBoundary(newNode->pos))
+//       return;
+
+
+//     // we are at a QT of unit area
+//     // we cannot subdivide this QT further
+//     if (abs(topLeft.x - botRight.x) <= 1 &&
+// 	abs(topLeft.y - botRight.y) <= 1)
+//       {
+// 	if (n == NULL)
+// 	  n = newNode;
+// 	return;
+//       }
+
+//     if ((topLeft.x + botRight.y) / 2 >= node->pos.y)
+//       {
+// 	// if we're here, it's left half of tree
+// 	if ((topLeft.y + botRight.y) / 2 >= node->pos.y)
+// 	  {
+// 	    // if we're in HERE, it's DEFINITELY top left quadrant
+// 	    if (topLeftTree == NULL)
+// 	      {
+// 		// 
+// 		topLeftTree = new quad(point(topLeft.x, topLeft.y),
+// 				       point((topLeft.x + botRight.x) / 2,
+// 					     (topLeft.y + botRight.y) / 2));
+// 		topLeftTree->insert(newNode);
+// 	      }
+// 	  }
+//       }
+
+    
+//   }
+// }
+
+
+void qt_3()
+{
+  srand(time(NULL));
+  QTNode a;
+  a.topLeft.x = 0;
+  a.topLeft.y = 0;
+  a.botRight.x = 100;
+  a.botRight.y = 100;
+
+  std::vector< Point * > points;
+  for (int i = 0; i < 10; ++i)
+    {
+      points.emplace_back(new Point(rand() % 100, rand() % 100));
+    }
+
+  //std::cout << points[1]->x << ' ' << points[1]->y << '\n';
+  std::cout << points;
+  for (int i = 0; i < 10; ++i)
+    {
+      a.insert(points[i]);
+    }  
+
+  std::cout << a.objs;
+  std::cout << a.hasChildren() << '\n';
+  return;
+}
+
 /*****************************************************************************
 For our programs involving graphics and sound, the template is this:
 
@@ -1228,7 +1374,11 @@ int main(int argc, char* argv[])
     
     // Prints to console window
     std::cout << "hello world" << std::endl;
-    quadtree();
+    //quadtree();
+
+    //qt_2();
+
+    qt_3();
     //test_event();
     //test_pixel();
     //test_line();
