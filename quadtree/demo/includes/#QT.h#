@@ -52,7 +52,6 @@ class QTNode
   bool inBoundary(Point);
   bool hasChildren();
   //int getDepth(QTNode * parent);
-  void draw();
 
   QTNode() // this will only be called for very first node
     {

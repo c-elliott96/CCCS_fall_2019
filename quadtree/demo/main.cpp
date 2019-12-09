@@ -1196,148 +1196,75 @@ void quadtree()
 }
 
 
-// void qt_2()
-// {
-//   const int THRESHOLD = 5;
-  
-//   struct point
-//   {
-//     int x;
-//     int y;
-//     point(int _x, int _y)
-//       {
-// 	x = _x;
-// 	y = _y;
-//       }
-//     point()
-//       {
-// 	x = 0;
-// 	y = 0;
-//       }
-//   };
 
-//   struct node
-//   {
-//     point pos;
-//     int data;
-//     node(point _pos, int _data)
-//     {
-//       pos = _pos;
-//       data = _data;
-//     }
-//     node()
-//     {
-//       data = 0;
-//     }
-//   };
+void tree_traversal(QTNode * n, std::vector< Rect > & ret)
+{
+  if (n->hasChildren())
+    {
+      tree_traversal(n->topLTree, ret);
+      tree_traversal(n->topRTree, ret);
+      tree_traversal(n->botLTree, ret);
+      tree_traversal(n->botRTree, ret);
+    }
 
-//   class quad    // main quadtree class
-//   {
-//     // holds details of the boundary of this node
-//     point topLeft;
-//     point botRight;
-
-//     // contains details of this node
-//     node *n;
-
-//     // children of this node if created
-//     quad *topLeftTree;
-//     quad *topRightTree;
-//     quad *botLeftTree;
-//     quad *botRightTree;
-
-//   public:
-//     quad()
-//     {
-//       topLeft = point(0, 0);
-//       botRight = point(0, 0);
-//       n = NULL;
-//       topLeftTree = NULL;
-//       topRightTree = NULL;
-//       botLeftTree = NULL;
-//       botRightTree = NULL;
-//     }
-//     quad(point topL, point botR)
-//     {
-//       n = NULL;
-//       topLeftTree = NULL;
-//       topRightTree = NULL;
-//       botLeftTree = NULL;
-//       botRightTree = NULL;
-//       topLeft = topL;
-//       botRight = botR;
-//     }
-//     void insert(node*);
-//     Node * search(point);
-//     bool inBoundary(point);
-//   };
-
-
-//   void quad::insert(node * newNode)
-//   {
-//     if (newNode == NULL)
-//       return;
-
-//     if(!inBoundary(newNode->pos))
-//       return;
-
-
-//     // we are at a QT of unit area
-//     // we cannot subdivide this QT further
-//     if (abs(topLeft.x - botRight.x) <= 1 &&
-// 	abs(topLeft.y - botRight.y) <= 1)
-//       {
-// 	if (n == NULL)
-// 	  n = newNode;
-// 	return;
-//       }
-
-//     if ((topLeft.x + botRight.y) / 2 >= node->pos.y)
-//       {
-// 	// if we're here, it's left half of tree
-// 	if ((topLeft.y + botRight.y) / 2 >= node->pos.y)
-// 	  {
-// 	    // if we're in HERE, it's DEFINITELY top left quadrant
-// 	    if (topLeftTree == NULL)
-// 	      {
-// 		// 
-// 		topLeftTree = new quad(point(topLeft.x, topLeft.y),
-// 				       point((topLeft.x + botRight.x) / 2,
-// 					     (topLeft.y + botRight.y) / 2));
-// 		topLeftTree->insert(newNode);
-// 	      }
-// 	  }
-//       }
-
-    
-//   }
-// }
+  else
+    {
+      ret.push_back(n->rect);
+    }
+}
 
 
 void qt_3()
 {
-  srand(time(NULL));
-  QTNode a;
-  a.topLeft.x = 0;
-  a.topLeft.y = 0;
-  a.botRight.x = 100;
-  a.botRight.y = 100;
+  QTNode n0;
+  n0.topLeft.x = 0;
+  n0.topLeft.y = 0;
+  n0.botRight.x = 800;
+  n0.botRight.y = 800;
+  std::cout << n0.rect.x << ' '
+	    << n0.rect.y << ' '
+	    << n0.rect.w << ' '
+	    << n0.rect.h << '\n';
 
-  std::vector< Point * > points;
-  for (int i = 0; i < 10; ++i)
+  Surface surface(800, 800);
+  Event event;
+  
+  srand(time(NULL));
+  QTNode * p = &n0;
+
+  int n = 5000;
+  for (int i = 0; i < n; ++i)
     {
-      points.emplace_back(new Point(rand() % 100, rand() % 100));
+      Point x(rand() % 800, rand() % 800);
+      n0.insert(x);
     }
 
-  //std::cout << points[1]->x << ' ' << points[1]->y << '\n';
-  std::cout << points;
-  for (int i = 0; i < 10; ++i)
+  std::vector< Rect > ret;
+  std::vector< Color > colors;
+  tree_traversal(&n0, ret);
+  for(int i = 0; i < ret.size(); ++i)
     {
-      a.insert(points[i]);
-    }  
-
-  std::cout << a.objs;
-  std::cout << a.hasChildren() << '\n';
+      std::cout << ret[i] << ' ';
+      Uint8 r = rand() % 255;
+      Uint8 g = rand() % 255;
+      Uint8 b = rand() % 255;
+      Color c = {r, g, b};
+      colors.push_back(c);
+    }
+  
+  while(1)
+    {
+      if (event.poll() && event.type() == QUIT) break;
+      surface.lock();
+      for (int i = 0; i < ret.size(); ++i)
+  	{
+  	  surface.put_rect(ret[i], colors[i]);
+  	}
+      surface.unlock();
+      surface.flip();
+      delay(10);
+    }
+  
   return;
 }
 
@@ -1373,7 +1300,7 @@ int main(int argc, char* argv[])
     //freopen("CON", "w", stderr);
     
     // Prints to console window
-    std::cout << "hello world" << std::endl;
+    //std::cout << "hello world" << std::endl;
     //quadtree();
 
     //qt_2();
