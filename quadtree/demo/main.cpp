@@ -1214,28 +1214,93 @@ void tree_traversal(QTNode * n, std::vector< Rect > & ret)
 }
 
 
+void print_points(QTNode * n, Surface & surface)
+{
+  if (n->hasChildren())
+    {
+      print_points(n->topLTree, surface);
+      print_points(n->topRTree, surface);
+      print_points(n->botLTree, surface);
+      print_points(n->botRTree, surface);
+    }
+
+  else
+    {
+      for (int i = 0; i < n->objs.size(); ++i)
+	{
+	  int pix_x = n->objs[i].x;
+	  int pix_y = n->objs[i].y;
+	  int r = 255;
+	  int g = 255;
+	  int b = 255;
+	  surface.put_pixel(pix_x, pix_y, r, g, b);
+	  n->objs[i].move(780, 780);
+	}
+    }
+}
+
+
+void test_rand()
+{
+  srand((unsigned int) time(NULL));
+  for (int i = 0; i < 100; ++i)
+    {
+      float x = float(rand()) / RAND_MAX * 2 - 1;
+      std::cout << x << '\n';
+    }
+}
+
+
+
+void delete_qt(QTNode * n)
+{
+  if (n->hasChildren())
+    {
+      // FIX THIS FUNCTION
+    }
+}
+
+void insert_qt(QTNode * n, int num, std::vector < Point > pts)
+{
+  for (int i = 0; i < num; ++i)
+    {
+      n->insert(pts[i]);
+    }
+}
+
+
 void qt_3()
 {
   QTNode n0;
-  n0.topLeft.x = 0;
-  n0.topLeft.y = 0;
-  n0.botRight.x = 800;
-  n0.botRight.y = 800;
-  std::cout << n0.rect.x << ' '
-	    << n0.rect.y << ' '
-	    << n0.rect.w << ' '
-	    << n0.rect.h << '\n';
+  n0.topLeft.x = 10;
+  n0.topLeft.y = 10;
+  n0.botRight.x = 790;
+  n0.botRight.y = 790;
+  // std::cout << n0.rect.x << ' '
+  // 	    << n0.rect.y << ' '
+  // 	    << n0.rect.w << ' '
+  // 	    << n0.rect.h << '\n';
 
   Surface surface(800, 800);
   Event event;
   
-  srand(time(NULL));
+  srand((unsigned int) time(NULL));
   QTNode * p = &n0;
 
-  int n = 5000;
+  std::vector < Point > pts;
+  int n = 700;
+
+  // NOTE: Default rand_range = rand() % 780 + 10
+  
   for (int i = 0; i < n; ++i)
     {
-      Point x(rand() % 800, rand() % 800);
+      int r = 255;
+      int g = 255;
+      int b = 255;
+      int rand_range1 = rand() % 780 + 10;
+      int rand_range2 = rand() % 780 + 10;
+      Point x(rand_range1, rand_range2);
+      pts.push_back(x);
       n0.insert(x);
     }
 
@@ -1244,25 +1309,53 @@ void qt_3()
   tree_traversal(&n0, ret);
   for(int i = 0; i < ret.size(); ++i)
     {
-      std::cout << ret[i] << ' ';
+      //std::cout << ret[i] << ' ';
       Uint8 r = rand() % 255;
       Uint8 g = rand() % 255;
       Uint8 b = rand() % 255;
       Color c = {r, g, b};
       colors.push_back(c);
     }
-  
+
+  std::vector< NodeRect > linePoints;
+  for (int i = 0; i < ret.size(); ++i)
+    {
+      NodeRect n = NodeRect(ret[i]);
+      linePoints.push_back(n);
+    }
+
+  for (int i = 0; i < linePoints.size(); ++i)
+    {
+      std::cout << linePoints[i];
+    }
+
   while(1)
     {
       if (event.poll() && event.type() == QUIT) break;
       surface.lock();
-      for (int i = 0; i < ret.size(); ++i)
-  	{
-  	  surface.put_rect(ret[i], colors[i]);
-  	}
+      surface.fill(BLACK);
+      for (int i = 0; i < linePoints.size(); ++i)
+      	{
+      	  int topLX = linePoints[i].topLeft.x;
+      	  int topLY = linePoints[i].topLeft.y;
+      	  int topRX = linePoints[i].topRight.x;
+      	  int topRY = linePoints[i].topRight.y;
+      	  int botLX = linePoints[i].botLeft.x;
+      	  int botLY = linePoints[i].botLeft.y;
+      	  int botRX = linePoints[i].botRight.x;
+      	  int botRY = linePoints[i].botRight.y;
+      	  Color c = {255, 255, 255};
+      	  surface.put_line(topLX, topLY, topRX, topRY, 255, 255, 255);
+      	  surface.put_line(topRX, topRY, botRX, botRY, 255, 255, 255);
+      	  surface.put_line(botRX, botRY, botLX, botLY, 255, 255, 255);
+      	  surface.put_line(botLX, botLY, topLX, topLY, 255, 255, 255);
+      	}
+      // print_points(&n0, surface);
+      // delete_qt(&n0);
+      // insert_qt(&n0, pts.size(), pts);
       surface.unlock();
       surface.flip();
-      delay(10);
+      delay(10);      
     }
   
   return;
@@ -1306,6 +1399,7 @@ int main(int argc, char* argv[])
     //qt_2();
 
     qt_3();
+    //test_rand();
     //test_event();
     //test_pixel();
     //test_line();

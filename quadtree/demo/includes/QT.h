@@ -4,17 +4,19 @@
 #include <iostream>
 #include <vector>
 
-class QT
-{
- 
-};
-
-
 class Point
 {
  public:
   int x;
   int y;
+  int r;
+  int g;
+  int b;
+  bool collides = false;
+  float dx;
+  float dy;
+  int radius;
+  void move(int x_bound, int y_bound);
 
   Point()
     {
@@ -26,8 +28,78 @@ class Point
     {
       x = x_;
       y = y_;
+      r = 255;
+      g = 255;
+      b = 255;
+      collides = false;
+      dx = float(rand()) / RAND_MAX * 2 - 1;
+      dy = float(rand()) / RAND_MAX * 2 - 1;
+      radius = 1;
     }
 };
+
+
+void Point::move(int x_bound, int y_bound)
+{
+  if (x < x_bound - 1 && y < y_bound - 1)
+    {
+      x += dx;
+      y += dy;
+    }
+
+  else if (x >= x_bound)
+    {
+      dx = -dx;
+      x += dx;
+    }
+
+  else if (y >= y_bound)
+    {
+      dy = -dy;
+      y += dy;
+    }
+}
+
+
+class NodeRect
+{
+public:
+  Point topLeft;
+  Point topRight;
+  Point botLeft;
+  Point botRight;
+
+  NodeRect(Rect rect)
+  {
+    topLeft.x = rect.x;
+    topLeft.y = rect.y;
+
+    topRight.x = rect.x + rect.w;
+    topRight.y = rect.y;
+
+    botLeft.x = rect.x;
+    botLeft.y = rect.y + rect.h;
+
+    botRight.x = rect.x + rect.w;
+    botRight.y = rect.y + rect.h;
+  }
+};
+
+
+std::ostream & operator<<(std::ostream & cout, NodeRect & n)
+{
+  cout << "Printing NodeRect values ... \n";
+  cout << "topLeft.x = " << n.topLeft.x << " . "
+       << "topLeft.y = " <<  n.topLeft.y << '\n'
+       << "topRight.x = " << n.topRight.x << " . "
+       << "topRight.y = " << n.topRight.y << '\n'
+       << "botLeft.x = " << n.botLeft.x << " . "
+       << "botLeft.y = " << n.botLeft.y << '\n'
+       << "botRight.x = " << n.botRight.x << " . "
+       << "botRight.y = " << n.botRight.y << '\n' << '\n';
+  return cout;
+}
+
 
 
 class QTNode
@@ -91,21 +163,34 @@ class QTNode
       parent = parent_;
       objs.clear();
     }
+  ~QTNode();
 };
+
+
+QTNode::~QTNode()
+{
+  if (!hasChildren())
+    {
+      delete topLTree;
+      delete topRTree;
+      delete botLTree;
+      delete botRTree;
+    }
+}
 
 
 void QTNode::insert(Point p)
 {
   if (!inBoundary(p))
     {
-      std::cout << "Exited after check 1\n";
+      //std::cout << "Exited after check 1\n";
       return;
     }
 
   if (objs.size() < threshold)
     {
       objs.push_back(p);
-      std::cout << "Exited after check 2\n";
+      //std::cout << "Exited after check 2\n";
       return;
     }
 
@@ -132,7 +217,7 @@ void QTNode::insert(Point p)
 				  Point(botRight.x, botRight.y),
 				  this);
 
-      std::cout << "Recursive function call ... \n";
+      //std::cout << "Recursive function call ... \n";
       
       if (topLTree->inBoundary(p))
 	{
