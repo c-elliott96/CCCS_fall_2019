@@ -186,6 +186,27 @@ class QTNode
       parent = parent_;
       objs.clear();
     }
+
+  QTNode(Point topL, Point botR, QTNode * parent_, int threshold_)
+    {
+      rect.x = topL.x;
+      rect.y = topL.y;
+      rect.w = botR.x - topL.x;
+      rect.h = botR.y - topL.y;
+      
+      topLeft = topL;
+      botRight = botR;
+
+      maxDepth = 10;
+      threshold = threshold_;
+      
+      topLTree = NULL;
+      topRTree = NULL;
+      botLTree = NULL;
+      botRTree = NULL;
+      parent = parent_;
+      objs.clear();
+    }
   ~QTNode();
 };
 

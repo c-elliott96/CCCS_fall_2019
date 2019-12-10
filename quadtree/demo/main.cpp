@@ -1159,6 +1159,7 @@ void tree_traversal_2(QTNode * n, std::vector< Rect > & ret)
 }
 
 
+
 void print_points_2(QTNode * n, Surface & surface)
 {
   if (n->hasChildren())
@@ -1202,9 +1203,9 @@ void print_points_1(QTNode & n, Surface & surface)
       	  int pix_x = n.objs[i].x;
       	  int pix_y = n.objs[i].y;
 	  int radius = n.objs[i].radius;
-      	  int r = 255;
-      	  int g = 255;
-      	  int b = 255;
+      	  int r = n.objs[i].r;
+      	  int g = n.objs[i].g;
+      	  int b = n.objs[i].b;
       	  surface.put_circle(pix_x, pix_y, radius, r, g, b);
       	  //n.objs[i].move(780, 780);
       	}
@@ -1257,6 +1258,54 @@ void clear_tree(QTNode * n)
   clear_tree(n->topRTree);
   clear_tree(n->botRTree);
   clear_tree(n->botLTree);
+}
+
+
+void check_collision(QTNode * n)
+{
+  if (n->hasChildren())
+    {
+      check_collision(n->topLTree);
+      check_collision(n->topRTree);
+      check_collision(n->botLTree);
+      check_collision(n->botRTree);
+    }
+
+  else
+    {
+      for (int i = 0; i < n->objs.size(); ++i)
+	{
+	  int x1 = n->objs[i].x;
+	  int y1 = n->objs[i].y;
+	  for (int j = 0; j < n->objs.size(); ++j)
+	    {
+	      int x2 = n->objs[j].x;
+	      int y2 = n->objs[j].y;
+	      if (x2 <= x1 + n->objs[i].radius && x2 >= x1 - n->objs[i].radius &&
+		  y2 <= y1 + n->objs[i].radius && y2 >= y1 - n->objs[i].radius)
+		{
+		  n->objs[i].r = 255;
+		  n->objs[i].g = 0;
+		  n->objs[i].b = 255;
+		  n->objs[j].r = 255;
+		  n->objs[j].g = 0;
+		  n->objs[j].b = 255;
+		}
+	    }
+	}
+    }
+}
+
+
+void add_more_pts(std::vector< Point > & pts)
+{
+  for (int i = 0; i < 100; ++i)
+    {
+      float x = rand() % 200 + 300;
+      float y = rand() % 200 + 300;
+      Point p(x, y);
+      pts.push_back(p);
+    }
 }
 
 
@@ -1325,7 +1374,7 @@ void qt_3()
   QTNode * p = &n0;
 
   std::vector < Point > pts;
-  int n = 300;
+  int n = 1200;
 
   // NOTE: Default rand_range = rand() % 780 + 10
   
@@ -1366,10 +1415,18 @@ void qt_3()
   //     std::cout << linePoints[i];
   //   }
   int z = 0;
+  //int threshold = 5;
 
   while(1)
-    {
+    {      
       if (event.poll() && event.type() == QUIT) break;
+
+      KeyPressed keypressed = get_keypressed();
+      if (keypressed[LEFTARROW])
+	{
+	  add_more_pts(pts);
+	}
+      
       surface.lock();
       surface.fill(BLACK);
       for (int i = 0; i < linePoints.size(); ++i)
@@ -1403,18 +1460,19 @@ void qt_3()
 	  
 	  Point tpl(10, 10);
 	  Point btr(790, 790);
-	  QTNode * n0 = new QTNode(tpl, btr, NULL);
-	  insert_qt(n0, pts.size(), pts);
-	  tree_traversal_2(n0, ret);
+	  QTNode * n1 = new QTNode(tpl, btr, NULL);
+	  insert_qt(n1, pts.size(), pts);
+	  check_collision(n1);
+	  tree_traversal_2(n1, ret);
 	  add_line_points(ret, linePoints);
 	  move_pts(pts);
-	  print_points_2(n0, surface);
+	  print_points_2(n1, surface);
 	}
       ++z;
       
       surface.unlock();
       surface.flip();
-      delay(10);
+      delay(20);
     }
   
   return;
