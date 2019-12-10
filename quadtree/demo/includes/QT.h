@@ -4,11 +4,25 @@
 #include <iostream>
 #include <vector>
 
+
+// class QT
+// {
+// public:
+//   QTNode * head;
+//   bool is_leaf;
+
+//   QT()
+//   {
+//     head = NULL;
+//     is_leaf = false;
+//   }
+// };
+
 class Point
 {
  public:
-  int x;
-  int y;
+  float x;
+  float y;
   int r;
   int g;
   int b;
@@ -22,9 +36,16 @@ class Point
     {
       x = 0;
       y = 0;
+      r = 255;
+      g = 255;
+      b = 255;
+      collides = false;
+      dx = float(rand()) / RAND_MAX * 2 - 1;
+      dy = float(rand()) / RAND_MAX * 2 - 1;
+      radius = 1;
     }
 
-  Point(int x_, int y_)
+  Point(float x_, float y_)
     {
       x = x_;
       y = y_;
@@ -120,9 +141,12 @@ class QTNode
   QTNode * botRTree;
   QTNode * parent;
 
+  bool is_leaf = false;
+
   void insert(Point);
   bool inBoundary(Point);
   bool hasChildren();
+  void clear_tree(QTNode *);
   //int getDepth(QTNode * parent);
 
   QTNode() // this will only be called for very first node
@@ -151,8 +175,7 @@ class QTNode
       
       topLeft = topL;
       botRight = botR;
-      
-      //depth = getDepth(parent);
+
       maxDepth = 10;
       threshold = 5;
       
@@ -169,15 +192,24 @@ class QTNode
 
 QTNode::~QTNode()
 {
-  if (!hasChildren())
-    {
-      delete topLTree;
-      delete topRTree;
-      delete botLTree;
-      delete botRTree;
-    }
+  // delete topLTree;
+  // delete topRTree;
+  // delete botLTree;
+  // delete botRTree;
 }
 
+
+// void QTNode::clear_tree(QTNode * n)
+// {
+//   if (n == NULL) return;
+
+//   clear_tree(n->topLTree);
+//   clear_tree(n->topRTree);
+//   clear_tree(n->botRTree);
+//   clear_tree(n->botLTree);
+
+//   delete n;
+// }
 
 void QTNode::insert(Point p)
 {

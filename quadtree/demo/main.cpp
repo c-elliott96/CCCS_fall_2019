@@ -1116,85 +1116,13 @@ void test_gamepad()
 }
 
 
-
-
-
-void quadtree()
-{
-  int Wx = 800;
-  int Hy = 800;
-  Surface surface(Wx, Hy);
-  Event event;
-  srand(time(NULL));
-  int x = rand() % Wx;
-  int y = rand() % Hy;
-  int w = 2;
-  int h = 2;
-  int dx;
-  int dy;
-  std::vector< Rect * > objs;
-  
-  while(objs.size() < 1000)
-    {
-      x = rand() % Wx;
-      y = rand() % Hy;
-      w = 1;
-      h = 1;
-      dx = (rand() % 3) - 1;
-      dy = (rand() % 3) - 1;
-      Rect * rect_ = new Rect(x,y,w,h,dx,dy);
-      objs.push_back(rect_);
-    }
-
-  for (int i = 0; i < objs.size(); ++i)
-    {
-      std::cout << "i = " << i << ' '
-		<< objs[i]->x << ' '
-		<< objs[i]->y << '\n';
-    }
-  
-  while(1)
-    {
-      if (event.poll() && event.type() == QUIT) break;
-
-      surface.lock();
-      surface.fill(BLACK);
-      int i = 0;
-      while (i < objs.size())
-	{
-	  surface.put_rect(objs[i]->x, objs[i]->y, objs[i]->w,
-			   objs[i]->h, 255, 255, 255);
-
-	  if (objs[i]->x <= 1)
-	    {
-	      objs[i]->dx *= -1;
-	    }
-	  if (objs[i]->x >= Wx - 1)
-	    {
-	      objs[i]->dx *= -1;
-	    }
-	  if (objs[i]->y <= 1)
-	    {
-	      objs[i]->dy *= -1;
-	    }
-	  if (objs[i]->y >= Hy - 1)
-	    {
-	      objs[i]->dy *= -1;
-	    }
-
-	  objs[i]->x += objs[i]->dx;
-	  objs[i]->y += objs[i]->dy;
-	  
-	  std::cout << "i = " << i << ' '
-		    << objs[i]->x << ' ' << objs[i]->y << '\n';
-	  ++i;
-	}
-      surface.unlock();
-      surface.flip();
-      delay(10);
-    }
-}
-
+//===============================================================//
+//                                                               //
+//                                                               //
+//                 TOP OF QUADTREE                               //
+//                                                               //
+//                                                               //
+//===============================================================//
 
 
 void tree_traversal(QTNode * n, std::vector< Rect > & ret)
@@ -1214,28 +1142,73 @@ void tree_traversal(QTNode * n, std::vector< Rect > & ret)
 }
 
 
-void print_points(QTNode * n, Surface & surface)
+void tree_traversal_2(QTNode * n, std::vector< Rect > & ret)
 {
   if (n->hasChildren())
     {
-      print_points(n->topLTree, surface);
-      print_points(n->topRTree, surface);
-      print_points(n->botLTree, surface);
-      print_points(n->botRTree, surface);
+      tree_traversal(n->topLTree, ret);
+      tree_traversal(n->topRTree, ret);
+      tree_traversal(n->botLTree, ret);
+      tree_traversal(n->botRTree, ret);
     }
 
   else
     {
+      ret.push_back(n->rect);
+    }
+}
+
+
+void print_points_2(QTNode * n, Surface & surface)
+{
+  if (n->hasChildren())
+    {
+      print_points_2(n->topLTree, surface);
+      print_points_2(n->topRTree, surface);
+      print_points_2(n->botLTree, surface);
+      print_points_2(n->botRTree, surface);
+    }
+  else
+    {
       for (int i = 0; i < n->objs.size(); ++i)
-	{
-	  int pix_x = n->objs[i].x;
-	  int pix_y = n->objs[i].y;
-	  int r = 255;
-	  int g = 255;
-	  int b = 255;
-	  surface.put_pixel(pix_x, pix_y, r, g, b);
-	  n->objs[i].move(780, 780);
-	}
+      	{
+      	  int pix_x = n->objs[i].x;
+      	  int pix_y = n->objs[i].y;
+	  int radius = n->objs[i].radius;
+      	  int r = 255;
+      	  int g = 255;
+      	  int b = 255;
+      	  surface.put_circle(pix_x, pix_y, radius, r, g, b);
+      	  //n->objs[i].move(780, 780);
+      	}
+      return;
+    }
+}
+
+
+void print_points_1(QTNode & n, Surface & surface)
+{
+  if (n.hasChildren())
+    {
+      print_points_1(*(n.topLTree), surface);
+      print_points_1(*(n.topRTree), surface);
+      print_points_1(*(n.botLTree), surface);
+      print_points_1(*(n.botRTree), surface);
+    }
+  else
+    {
+      for (int i = 0; i < n.objs.size(); ++i)
+      	{
+      	  int pix_x = n.objs[i].x;
+      	  int pix_y = n.objs[i].y;
+	  int radius = n.objs[i].radius;
+      	  int r = 255;
+      	  int g = 255;
+      	  int b = 255;
+      	  surface.put_circle(pix_x, pix_y, radius, r, g, b);
+      	  //n.objs[i].move(780, 780);
+      	}
+      return;
     }
 }
 
@@ -1251,20 +1224,84 @@ void test_rand()
 }
 
 
-
-void delete_qt(QTNode * n)
-{
-  if (n->hasChildren())
-    {
-      // FIX THIS FUNCTION
-    }
-}
-
 void insert_qt(QTNode * n, int num, std::vector < Point > pts)
 {
   for (int i = 0; i < num; ++i)
     {
       n->insert(pts[i]);
+    }
+}
+
+
+void clear_tree(QTNode * n)
+{
+  if (n->is_leaf)
+    {
+      if (n->parent != NULL)
+	{
+	  n->parent->is_leaf = true;
+	  delete n;
+	  return;
+	}
+      else
+	return;      
+    }
+
+  if (!n->hasChildren() && n->is_leaf == false)
+    {
+      n->parent->is_leaf = true;
+      return;
+    }
+
+  clear_tree(n->topLTree);
+  clear_tree(n->topRTree);
+  clear_tree(n->botRTree);
+  clear_tree(n->botLTree);
+}
+
+
+void add_line_points(std::vector< Rect > ret, std::vector< NodeRect > & linePoints)
+{
+  for (int i = 0; i < ret.size(); ++i)
+    {
+      NodeRect n = NodeRect(ret[i]);
+      linePoints.push_back(n);
+    }
+
+  // for (int i = 0; i < linePoints.size(); ++i)
+  //   {
+  //     std::cout << linePoints[i];
+  //   }
+}
+
+
+void move_pts(std::vector< Point > & pts)
+{
+  for (int i = 0; i < pts.size(); ++i)
+    {
+      if (pts[i].x <= 10)
+	{
+	  // collides w/ west wall
+	  pts[i].dx = -(pts[i].dx);
+	}
+
+      else if (pts[i].x >= 790)
+	{
+	  pts[i].dx = -(pts[i].dx);
+	}
+
+      else if (pts[i].y <= 10)
+	{
+	  pts[i].dy = -(pts[i].dy);
+	}
+
+      else if (pts[i].y >= 790)
+	{
+	  pts[i].dy = -(pts[i].dy);
+	}
+
+      pts[i].x += pts[i].dx;
+      pts[i].y += pts[i].dy;
     }
 }
 
@@ -1288,7 +1325,7 @@ void qt_3()
   QTNode * p = &n0;
 
   std::vector < Point > pts;
-  int n = 700;
+  int n = 300;
 
   // NOTE: Default rand_range = rand() % 780 + 10
   
@@ -1324,10 +1361,11 @@ void qt_3()
       linePoints.push_back(n);
     }
 
-  for (int i = 0; i < linePoints.size(); ++i)
-    {
-      std::cout << linePoints[i];
-    }
+  // for (int i = 0; i < linePoints.size(); ++i)
+  //   {
+  //     std::cout << linePoints[i];
+  //   }
+  int z = 0;
 
   while(1)
     {
@@ -1350,12 +1388,33 @@ void qt_3()
       	  surface.put_line(botRX, botRY, botLX, botLY, 255, 255, 255);
       	  surface.put_line(botLX, botLY, topLX, topLY, 255, 255, 255);
       	}
-      // print_points(&n0, surface);
-      // delete_qt(&n0);
-      // insert_qt(&n0, pts.size(), pts);
+      
+      if (z == 0)
+	{
+	  print_points_1(n0, surface);
+	}
+
+      else
+	{
+	  clear_tree(&n0);
+	  ret.clear();
+	  linePoints.clear();
+	  //delete &n0;
+	  
+	  Point tpl(10, 10);
+	  Point btr(790, 790);
+	  QTNode * n0 = new QTNode(tpl, btr, NULL);
+	  insert_qt(n0, pts.size(), pts);
+	  tree_traversal_2(n0, ret);
+	  add_line_points(ret, linePoints);
+	  move_pts(pts);
+	  print_points_2(n0, surface);
+	}
+      ++z;
+      
       surface.unlock();
       surface.flip();
-      delay(10);      
+      delay(10);
     }
   
   return;
