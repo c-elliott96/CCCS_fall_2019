@@ -1374,7 +1374,7 @@ void qt_3()
   QTNode * p = &n0;
 
   std::vector < Point > pts;
-  int n = 1200;
+  int n = 400;
 
   // NOTE: Default rand_range = rand() % 780 + 10
   
