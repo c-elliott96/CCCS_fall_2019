@@ -210,9 +210,32 @@ unsigned int alt_hash (std::string str)
 }
 
 		  
-void do_action(std::vector < unsigned int > command)
+void do_action(std::string & command, std::map < unsigned int, std::string > map)
 {
-  
+  // here, we use str_to_int to convert input string to unsigned int vector
+  std::vector < unsigned int > uint_command = str_to_uint(command);
+
+  // now, we pass unsigned int vector into interpret to look for whitespace 
+  // (and return first "word") of the command string. returned as unsigned int substring.
+  std::vector < unsigned int > uint_command_token = interpret(uint_command);
+
+  // convert uint_command_token back into string .... to then be hashed
+  std::string tok_str = ascii_to_uint(uint_command_token);
+  // hash tok_str to see if hash exists in map
+  unsigned int tok = alt_hash(tok_str);
+
+  bool command_exists = false;
+  std::map < unsigned int, std::string > :: iterator it = map.begin();
+  while (it != map.end())
+  {
+    if (it->first == tok)
+    {
+      command_exists = true;
+      break;
+    }
+    else
+    ++it;
+  }
 }
 
 
@@ -432,7 +455,9 @@ int main()
   // creates and itializes registers map
   std::map < unsigned int , unsigned int > map_registers;
   create_registers(map_registers);
-  print_map_registers(map_registers);
+  //print_map_registers(map_registers);
+  std::string temp_input = get_input();
+  do_action(temp_input, map);
   return 0;
   
   while(1)
