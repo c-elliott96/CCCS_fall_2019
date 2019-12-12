@@ -1417,15 +1417,36 @@ void qt_3()
   int z = 0;
   //int threshold = 5;
 
+  Color c = {255, 255, 255};
+  bool color_on = false;
+  int count = 0;
   while(1)
     {      
       if (event.poll() && event.type() == QUIT) break;
-
+      
+      
       KeyPressed keypressed = get_keypressed();
+      
       if (keypressed[LEFTARROW])
-	{
-	  add_more_pts(pts);
-	}
+      {
+        add_more_pts(pts);
+      }
+
+      if (keypressed[TAB])
+      {
+        if (!color_on && count > 150) // only allows for change every 3 seconds
+        {
+          c = {255, 0, 255};
+          color_on = true;
+          count = 0;
+        }
+        else if (color_on && count > 150)
+        {
+          c = {255, 255, 255};
+          color_on = false;
+          count = 0;
+        }
+      }
       
       surface.lock();
       surface.fill(BLACK);
@@ -1439,12 +1460,13 @@ void qt_3()
       	  int botLY = linePoints[i].botLeft.y;
       	  int botRX = linePoints[i].botRight.x;
       	  int botRY = linePoints[i].botRight.y;
-      	  Color c = {255, 255, 255};
-      	  surface.put_line(topLX, topLY, topRX, topRY, 255, 255, 255);
-      	  surface.put_line(topRX, topRY, botRX, botRY, 255, 255, 255);
-      	  surface.put_line(botRX, botRY, botLX, botLY, 255, 255, 255);
-      	  surface.put_line(botLX, botLY, topLX, topLY, 255, 255, 255);
+      	  
+          surface.put_line(topLX, topLY, topRX, topRY, c);
+      	  surface.put_line(topRX, topRY, botRX, botRY, c);
+      	  surface.put_line(botRX, botRY, botLX, botLY, c);
+      	  surface.put_line(botLX, botLY, topLX, topLY, c);
       	}
+        ++count;
       
       if (z == 0)
 	{
