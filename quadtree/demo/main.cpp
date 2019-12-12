@@ -1421,81 +1421,79 @@ void qt_3()
   bool color_on = false;
   int count = 0;
   while(1)
-    {      
-      if (event.poll() && event.type() == QUIT) break;
-      
-      
-      KeyPressed keypressed = get_keypressed();
-      
-      if (keypressed[LEFTARROW])
-      {
-        add_more_pts(pts);
-      }
-
-      if (keypressed[TAB])
-      {
-        if (!color_on && count > 150) // only allows for change every 3 seconds
-        {
-          c = {255, 0, 255};
-          color_on = true;
-          count = 0;
-        }
-        else if (color_on && count > 150)
-        {
-          c = {255, 255, 255};
-          color_on = false;
-          count = 0;
-        }
-      }
-      
-      surface.lock();
-      surface.fill(BLACK);
-      for (int i = 0; i < linePoints.size(); ++i)
-      	{
-      	  int topLX = linePoints[i].topLeft.x;
-      	  int topLY = linePoints[i].topLeft.y;
-      	  int topRX = linePoints[i].topRight.x;
-      	  int topRY = linePoints[i].topRight.y;
-      	  int botLX = linePoints[i].botLeft.x;
-      	  int botLY = linePoints[i].botLeft.y;
-      	  int botRX = linePoints[i].botRight.x;
-      	  int botRY = linePoints[i].botRight.y;
-      	  
-          surface.put_line(topLX, topLY, topRX, topRY, c);
-      	  surface.put_line(topRX, topRY, botRX, botRY, c);
-      	  surface.put_line(botRX, botRY, botLX, botLY, c);
-      	  surface.put_line(botLX, botLY, topLX, topLY, c);
-      	}
-        ++count;
-      
-      if (z == 0)
-	{
-	  print_points_1(n0, surface);
-	}
-
-      else
-	{
-	  clear_tree(&n0);
-	  ret.clear();
-	  linePoints.clear();
-	  //delete &n0;
-	  
-	  Point tpl(10, 10);
-	  Point btr(790, 790);
-	  QTNode * n1 = new QTNode(tpl, btr, NULL);
-	  insert_qt(n1, pts.size(), pts);
-	  check_collision(n1);
-	  tree_traversal_2(n1, ret);
-	  add_line_points(ret, linePoints);
-	  move_pts(pts);
-	  print_points_2(n1, surface);
-	}
-      ++z;
-      
-      surface.unlock();
-      surface.flip();
-      delay(20);
+  {      
+    if (event.poll() && event.type() == QUIT) break;
+    KeyPressed keypressed = get_keypressed();
+    
+    if (keypressed[LEFTARROW])
+    {
+      add_more_pts(pts);
     }
+
+    if (keypressed[TAB])
+    {
+      if (!color_on && count > 150) // only allows for change every 3 seconds
+      {
+        c = {255, 0, 255};
+        color_on = true;
+        count = 0;
+      }
+      else if (color_on && count > 150)
+      {
+        c = {255, 255, 255};
+        color_on = false;
+        count = 0;
+      }
+    }
+    
+    surface.lock();
+    surface.fill(BLACK);
+    for (int i = 0; i < linePoints.size(); ++i)
+      {
+        int topLX = linePoints[i].topLeft.x;
+        int topLY = linePoints[i].topLeft.y;
+        int topRX = linePoints[i].topRight.x;
+        int topRY = linePoints[i].topRight.y;
+        int botLX = linePoints[i].botLeft.x;
+        int botLY = linePoints[i].botLeft.y;
+        int botRX = linePoints[i].botRight.x;
+        int botRY = linePoints[i].botRight.y;
+        
+        surface.put_line(topLX, topLY, topRX, topRY, c);
+        surface.put_line(topRX, topRY, botRX, botRY, c);
+        surface.put_line(botRX, botRY, botLX, botLY, c);
+        surface.put_line(botLX, botLY, topLX, topLY, c);
+      }
+    ++count;
+    
+    if (z == 0)
+    {
+      print_points_1(n0, surface);
+    }
+
+    else
+    {
+      clear_tree(&n0);
+      ret.clear();
+      linePoints.clear();
+      //delete &n0;
+      
+      Point tpl(10, 10);
+      Point btr(790, 790);
+      QTNode * n1 = new QTNode(tpl, btr, NULL);
+      insert_qt(n1, pts.size(), pts);
+      check_collision(n1);
+      tree_traversal_2(n1, ret);
+      add_line_points(ret, linePoints);
+      move_pts(pts);
+      print_points_2(n1, surface);
+    }
+    ++z;
+    
+    surface.unlock();
+    surface.flip();
+    delay(20);
+  }
   
   return;
 }
