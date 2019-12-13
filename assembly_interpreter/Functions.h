@@ -8,6 +8,7 @@
 #include <iterator>
 #include <map>
 #include <functional>
+#include <iomanip>
 
 // use for taking in std::string input
 std::string get_input(std::string &S)
@@ -447,8 +448,11 @@ void print_map_registers(std::map < unsigned int, unsigned int > map)
   int j = 0;
   for (it2 = map.begin(); it2 != map.end(); ++it2)
   {
-    std::cout << j << ". ";
-    std::cout << it2->first << " => " << it2->second << '\n';
+    std::cout << "R" << j;
+    if (j < 10) std::cout << ' ';
+
+    std::cout << std::setw(5) << "=>" 
+    << std::right << std::setw(10) << it2->second << '\n';
     ++j;
   }
 }

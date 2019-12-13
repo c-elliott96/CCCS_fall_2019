@@ -9,6 +9,7 @@
 #include <iterator>
 #include <map>
 #include <functional>
+#include <iomanip>
 #include "Interpreter.h"
 #include "Functions.h"
 
@@ -22,45 +23,45 @@ int main()
   std::map < unsigned int, std::string > map = map_commands();
   
   // creates and itializes registers map
-  std::map < unsigned int , unsigned int > map_registers;
+  std::map < unsigned int, unsigned int > map_registers;
   create_registers(map_registers);
-  //print_map_registers(map_registers);
-  std::string temp_input = get_input();
-  do_action(temp_input, map, map_registers);
+  print_map_registers(map_registers);
+  // std::string temp_input = get_input();
+  // do_action(temp_input, map, map_registers);
   return 0;
   
   while(1)
-    {
-      std::cout << "Enter a PCSPIM / MIPS command: ";
+  {
+    std::cout << "Enter a PCSPIM / MIPS command: ";
 
-      std::string input = get_input(); // get command input
-      std::vector< unsigned int> uints = str_to_uint(input); // convert string into a uint vec
+    std::string input = get_input(); // get command input
+    std::vector< unsigned int> uints = str_to_uint(input); // convert string into a uint vec
 
-      std::string str;		
-      str = ascii_to_uint(uints); // turn uints back into chars (not sure if this is necessary
+    std::string str;		
+    str = ascii_to_uint(uints); // turn uints back into chars (not sure if this is necessary
 
-      // =========== SAVES INSTRUCTIONS ========== 
-      instructions.push_back(input); // store instructions (in a doubly linked list)
-      instructions_uint.push_back(uints); // also a doubly linked list - of uint vectors!
-      // if (!instructions.empty())	  // this block prints instructions - for debugging
-      // 	{
-      // 	  std::list < std::string > ::iterator it;
-      // 	  int i = 0;
-      // 	  for (it = instructions.begin(); it != instructions.end(); ++it)
-      // 	    {
-      // 	      std::cout << *it << ' ';
-      // 	      ++i;
-      // 	    }
-      // 	  std::cout << '\n';
-      // 	}
-      // ============ END ===============================
+    // =========== SAVES INSTRUCTIONS ========== 
+    instructions.push_back(input); // store instructions (in a doubly linked list)
+    instructions_uint.push_back(uints); // also a doubly linked list - of uint vectors!
+    // if (!instructions.empty())	  // this block prints instructions - for debugging
+    // 	{
+    // 	  std::list < std::string > ::iterator it;
+    // 	  int i = 0;
+    // 	  for (it = instructions.begin(); it != instructions.end(); ++it)
+    // 	    {
+    // 	      std::cout << *it << ' ';
+    // 	      ++i;
+    // 	    }
+    // 	  std::cout << '\n';
+    // 	}
+    // ============ END ===============================
 
-      // tokenize() parses unsigned int vector
-      //tokenize(uints);
-      
-      //print_registers(map);
-      //print_instructions_uint(instructions_uint);
-      interpret(uints);
-      std::cout << "Hashed command: " << hash(uints) << '\n';
-    }
+    // tokenize() parses unsigned int vector
+    //tokenize(uints);
+    
+    //print_registers(map);
+    //print_instructions_uint(instructions_uint);
+    interpret(uints);
+    std::cout << "Hashed command: " << hash(uints) << '\n';
+  }
 }
