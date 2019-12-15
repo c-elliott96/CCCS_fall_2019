@@ -21,22 +21,22 @@ int main()
 
   // creates and itializes command map - format: unsigned int hash, string command
   std::map < unsigned int, std::string > map = map_commands();
-  
+  std::map < unsigned int, std::string > ::iterator it = map.begin();
+  while (it != map.end())
+  {
+    std::cout << it->first << ' ' << it->second << '\n';
+    ++it;
+  }
   // creates and itializes registers map
   std::map < unsigned int, unsigned int > map_registers;
   create_registers(map_registers);
-  print_map_registers(map_registers);
-  // std::string temp_input = get_input();
-  // do_action(temp_input, map, map_registers);
-  return 0;
-  
   while(1)
   {
     std::cout << "Enter a PCSPIM / MIPS command: ";
 
     std::string input = get_input(); // get command input
     std::vector< unsigned int> uints = str_to_uint(input); // convert string into a uint vec
-
+    tokenize_do(uints, map, map_registers);
     std::string str;		
     str = ascii_to_uint(uints); // turn uints back into chars (not sure if this is necessary
 
@@ -61,7 +61,7 @@ int main()
     
     //print_registers(map);
     //print_instructions_uint(instructions_uint);
-    interpret(uints);
-    std::cout << "Hashed command: " << hash(uints) << '\n';
+    //interpret(uints);
+    //std::cout << "Hashed command: " << hash(uints) << '\n';
   }
 }

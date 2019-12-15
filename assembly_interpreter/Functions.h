@@ -9,6 +9,30 @@
 #include <map>
 #include <functional>
 #include <iomanip>
+#include "Pseudo.h"
+
+
+
+unsigned int alt_hash (std::string str)
+{
+  std::vector< unsigned int > ints;
+  std::string::iterator it;
+  int i = 1;
+  for (it = str.begin(); it != str.end(); ++it)
+    {
+      unsigned int x = i * (unsigned(int(*it)));
+      ints.push_back(x);
+      ++i;
+    }
+  unsigned int sum = 0;
+  for (int j = 0; j < ints.size(); ++j)
+    {
+      sum += ints[j];
+    }
+  //std::cout << sum << '\n';
+  return sum;
+}
+
 
 // use for taking in std::string input
 std::string get_input(std::string &S)
@@ -56,41 +80,256 @@ std::string ascii_to_uint(const std::vector< unsigned int > & x)
 
 
 // finds first substring ... not sure if needed 
-void tokenize(const std::vector < unsigned int > & x)
+std::vector < std::string > tokenize_do(const std::vector < unsigned int > & x, 
+                                        std::map < unsigned int , std::string > map,
+                                        std::map < unsigned int, unsigned int > map_registers)
 {
+  std::vector < std::string > whole_string;
   std::string substring;
+  std::string reg_string;
+  bool is_register = false;
+  bool is_command = false;
+  bool is_data_or_text = false;
+  bool reg_add = false;
   int i = 0;
-  while (i < x.size() && x[i] != 32)
+  while (i < x.size())
+  {
+    if (x[i] != 32)
     {
       substring.push_back(char(x[i]));
+    }
+    if (x[i] == 32 && !is_data_or_text)
+    {
+      is_command = true;
+      break;
+    }
+    else if (x[i] == 46)
+    {
+      // it's either .data or .text
+      is_data_or_text = true;
+      break;
+    }
+    ++i;
+  }
+
+  if (is_command)
+  {
+    i = substring.size();
+    whole_string.push_back(substring);
+    while (i < x.size())
+    {
+      if (x[i] == 36 && !reg_add)
+      {
+        reg_add = true;
+      }
+      if (reg_add && x[i] != 36 && x[i] != 44) // if we're looking for a register and we're not currently looking at a dollar sign or a comma
+      {
+        reg_string.push_back(char(x[i]));
+      }
+
+      if (x[i] == 32 || x[i] == 44) // we've completed adding the register information, reset and continue
+      {
+        reg_string.push_back(' ');
+        reg_add = false;
+      }
       ++i;
     }
-}
+    whole_string.push_back(reg_string);
 
-
-unsigned int hash(const unsigned int x)
-{
-  std::hash < unsigned int > y;
-  //std::cout << "Hashed uint: ";
-  // std::cout << y(x) << '\n';
-  unsigned int ret = y(x);
-  return ret;
-}
-
-
-unsigned int hash(const std::vector < unsigned int > x)
-{
-  std::hash < unsigned int > y;
-
-  unsigned int sum = 0;
-  for (int i = 0; i < x.size(); ++i)
+    unsigned int cmd_hash = alt_hash(whole_string[0]);
+    std::cout << cmd_hash << '\n';
+    switch (cmd_hash)
     {
-      sum += x[i];
+      case 106: // j 
+      {
+        break;
+      }
+      case 304: // lb
+      {
+        break;
+      }
+      case 311: // sb
+      {
+        break;
+      }
+      case 318: // li
+      {
+        pseudo_li(map_registers, whole_string);
+        break;
+      }
+      case 334: // jr
+      {
+        break;
+      }
+      case 339: // or 
+      {
+        break;
+      }
+      case 346: // lw
+      {
+        break;
+      }
+      case 353: // sw
+      {
+        break;
+      }
+      case 597: // add
+      {
+        //pseudo_add()
+        break;
+      }
+      case 617: // and
+      {
+        break;
+      }
+      case 621: // bne
+      {
+        break;
+      }
+      case 624: // jal
+      {
+        break;
+      }
+      case 634: // sra
+      {
+        break;
+      }
+      case 639: // beq
+      {
+        break;
+      }
+      case 643: // sub
+      {
+        break;
+      }
+      case 654: // ori
+      {
+        break;
+      }
+      case 655: // sll
+      {
+        break;
+      }
+      case 657: // lui
+      {
+        break;
+      }
+      case 664: // div
+      {
+        break;
+      }
+      case 667: // srl
+      {
+        break;
+      }
+      case 679: // slt
+      {
+        break;
+      }
+      case 684: // xor 
+      {
+        break;
+      }
+      case 1017: // addi
+      {
+        break;
+      }
+      case 1037: // andi
+      {
+        break;
+      }
+      case 1045: // mfhi
+      {
+        break;
+      }
+      case 1065: // addu
+      {
+        break;
+      }
+      case 1081: // mflo
+      {
+        break;
+      }
+      case 1095: // bgez
+      {
+        break;
+      }
+      case 1099: // slti
+      {
+        break;
+      }
+      case 1104: // xori
+      {
+        break;
+      }
+      case 1105: // blez
+      {
+        break;
+      }
+      case 1111: // subu
+      {
+        break;
+      }
+      case 1113: // noop
+      {
+        break;
+      }
+      case 1127: // sllv
+      {
+        break;
+      }
+      case 1131: // mult
+      {
+        break;
+      }
+      case 1132: // divu 
+      {
+        break;
+      }
+      case 1139: // srlv
+      {
+        break;
+      }
+      case 1140: // bgtz
+      {
+        break;
+      }
+      case 1147: // sltu
+      {
+        break;
+      }
+      case 1150: // bltz
+      {
+        break;
+      }
+      case 1602: // addiu
+      {
+        break;
+      }
+      case 1684: // sltiu
+      {
+        break;
+      }
+      case 1716: // multu
+      {
+        break;
+      }
+      case 2228: // bgezal
+      {
+        break;
+      }
+      case 2283: // bltzal
+      {
+        break;
+      }
+      case 2987: // syscall
+      {
+        break;
+      }
     }
-  //std::cout << "Hashed uint: ";
-  // std::cout << y(x) << '\n';
-  unsigned int ret = y(sum);
-  return ret;
+  }  
+
+  return whole_string;
 }
 
 
@@ -111,7 +350,7 @@ std::vector < unsigned int > interpret(std::vector < unsigned int > x)
 
 void create_registers(std::map < unsigned int, unsigned int > & map)
 {
-  for (unsigned int i = 0; i < 32; ++i)
+  for (unsigned int i = 0; i < 35; ++i)
     {
         map.insert(std::pair< unsigned int , unsigned int > (i , 0));
     }
@@ -185,27 +424,6 @@ void print_instructions_uint(std::list < std::vector < unsigned int > > instruct
   xor	    345    684
   xori	  450    1104
 }*/
-
-
-unsigned int alt_hash (std::string str)
-{
-  std::vector< unsigned int > ints;
-  std::string::iterator it;
-  int i = 1;
-  for (it = str.begin(); it != str.end(); ++it)
-    {
-      unsigned int x = i * (unsigned(int(*it)));
-      ints.push_back(x);
-      ++i;
-    }
-  unsigned int sum = 0;
-  for (int j = 0; j < ints.size(); ++j)
-    {
-      sum += ints[j];
-    }
-  //std::cout << sum << '\n';
-  return sum;
-}
 
 
 void do_action(std::string & command, std::map < unsigned int, std::string > map, 
@@ -319,6 +537,9 @@ std::map < unsigned int, std::string > map_commands()
     a.clear();
 
     a = "lb";
+    list.push_back(a);
+    a.clear();
+    a = "li";
     list.push_back(a);
     a.clear();
     a = "lui";
@@ -456,5 +677,6 @@ void print_map_registers(std::map < unsigned int, unsigned int > map)
     ++j;
   }
 }
+
 
 #endif
