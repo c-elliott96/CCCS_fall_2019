@@ -36,6 +36,13 @@ int main()
   print_map_registers_1(registers);
   print_data(data);
 
+  std::vector < std::string > help_commands;
+  init_help_commands(help_commands);
+  // for (int i = 0; i < help_commands.size(); ++i)
+  // {
+  //   std::cout << help_commands[i] << '\n';
+  // }
+
   while(1)
   {
     std::cout << "Enter a PCSPIM / MIPS command: ";
@@ -65,7 +72,7 @@ int main()
     // tokenize() parses unsigned int vector
     //tokenize(uints);
     
-    print_map_registers_1(registers);
+    //print_map_registers_1(registers);
     //print_instructions_uint(instructions_uint);
     //interpret(uints);
     //std::cout << "Hashed command: " << hash(uints) << '\n';

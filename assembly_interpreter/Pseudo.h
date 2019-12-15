@@ -179,9 +179,9 @@ std::string reg_0, std::string reg_1, std::string reg_2)
     unsigned int reg0 = registers[get_registers(reg_0)];
     unsigned int reg1 = registers[get_registers(reg_1)];
     unsigned int reg2 = registers[get_registers(reg_2)];
-    std::cout << "reg0 = " << reg0 << '\n';
-    std::cout << "reg1 = " << reg1 << '\n';
-    std::cout << "reg2 = " << reg2 << '\n';
+    // std::cout << "reg0 = " << reg0 << '\n';
+    // std::cout << "reg1 = " << reg1 << '\n';
+    // std::cout << "reg2 = " << reg2 << '\n';
     registers[get_registers(reg_0)] = reg1 + reg2;
 }
 
@@ -205,9 +205,9 @@ std::string reg_0, std::string reg_1, std::string reg_2)
     unsigned int reg0 = registers[get_registers(reg_0)];
     unsigned int reg1 = registers[get_registers(reg_1)];
     unsigned int reg2 = registers[get_registers(reg_2)];
-    std::cout << "reg0 = " << reg0 << '\n';
-    std::cout << "reg1 = " << reg1 << '\n';
-    std::cout << "reg2 = " << reg2 << '\n';
+    // std::cout << "reg0 = " << reg0 << '\n';
+    // std::cout << "reg1 = " << reg1 << '\n';
+    // std::cout << "reg2 = " << reg2 << '\n';
     registers[get_registers(reg_0)] = reg1 - reg2;
 }
 

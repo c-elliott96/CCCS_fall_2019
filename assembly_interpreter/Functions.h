@@ -43,6 +43,26 @@ void create_data(std::vector < unsigned int > & data)
 }
 
 
+void init_help_commands(std::vector < std::string > & help_commands)
+{
+  std::string str;
+  str = "\\help";
+  help_commands.push_back(str);
+
+  str = "\\data";
+  help_commands.push_back(str);
+
+  str = "\\registers";
+  help_commands.push_back(str);
+
+  str = ".data";
+  help_commands.push_back(str);
+
+  str = ".text";
+  help_commands.push_back(str);
+}
+
+
 void print_data(const std::vector < unsigned int > & data)
 {
   std::cout << "================================================================\n"
@@ -119,10 +139,28 @@ std::string ascii_to_uint(const std::vector< unsigned int > & x)
 }
 
 
+bool help_command_exists(const std::string & command, 
+const std::vector < std::string > & help)
+{
+  std::cout << "command syntax: " << command << '\n';
+  for (int i = 0; i < help.size(); ++i)
+  {
+    std::cout << "help_commands[i] = " << help[i];
+    if (command == help[i])
+    {
+      std::cout << "they match\n";
+      return true;
+    }
+  }
+  return false;
+}
+
+
 // finds first substring ... not sure if needed 
 void tokenize_do(const std::vector < unsigned int > & x, 
 std::map < unsigned int , std::string > map,
-std::vector < unsigned int > & registers)
+std::vector < unsigned int > & registers,
+const std::vector < std::string > & help_commands)
 {
   // parse string for command 
   bool is_command = false;
@@ -151,6 +189,14 @@ std::vector < unsigned int > & registers)
   std::string reg_1;
   std::string reg_2;
   std::string const_immed;
+
+  bool help_cmd_exists = help_command_exists(x, help_commands);
+  std::cout << help_cmd_exists << '\n';
+  if (help_cmd_exists)
+  {
+    //command_exists = true;
+    std::cout << "Help command entered\n";
+  }
 
   if (is_command)
   {
@@ -520,6 +566,7 @@ std::vector < unsigned int > interpret(std::vector < unsigned int > x)
 }
 
 
+// obsolete 
 void create_registers(std::map < unsigned int, unsigned int > & map)
 {
   for (unsigned int i = 0; i < 35; ++i)
@@ -607,8 +654,12 @@ void print_instructions_uint(std::list < std::vector < unsigned int > > instruct
 }*/
 
 
+
+
+
 void do_action(std::string & command, std::map < unsigned int, std::string > map, 
-               std::map < unsigned int, unsigned int > reg_map)
+               std::map < unsigned int, unsigned int > reg_map,
+               const std::vector < std::string > & help_commands)
 {
   // here, we use str_to_int to convert input string to unsigned int vector
   std::vector < unsigned int > uint_command = str_to_uint(command);
@@ -629,12 +680,18 @@ void do_action(std::string & command, std::map < unsigned int, std::string > map
     if (it->first == tok)
     {
       command_exists = true;
-      
     }
     else
     ++it;
   }
 
+  bool help_cmd_exists = help_command_exists(command, help_commands);
+  std::cout << help_cmd_exists << '\n';
+  if (help_cmd_exists)
+  {
+    command_exists = true;
+    std::cout << "Help command entered\n";
+  }
 
   if (command_exists)
   {
@@ -923,6 +980,8 @@ void print_map_registers_1(const std::vector < unsigned int > & regs)
             << "R34" << std::setw(10) << "[lo] = " << regs[34] << '\n'
             << "================================================================\n";
 }
+
+
 
 
 
