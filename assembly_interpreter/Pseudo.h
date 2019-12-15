@@ -173,14 +173,16 @@ unsigned int char_to_int(std::string str)
 }
 
 
-void pseudo_add(std::map < unsigned int, unsigned int > & registers_map, 
-std::vector < std::string > whole_string)
+void pseudo_add(std::vector < unsigned int > & registers, 
+std::string reg_0, std::string reg_1, std::string reg_2)
 {
-    unsigned int a = get_registers(whole_string[1]);
-    unsigned int b = get_registers(whole_string[2]);
-    unsigned int c = get_registers(whole_string[3]);
-
-    registers_map[a] = registers_map[b] + registers_map[c];
+    unsigned int reg0 = registers[get_registers(reg_0)];
+    unsigned int reg1 = registers[get_registers(reg_1)];
+    unsigned int reg2 = registers[get_registers(reg_2)];
+    std::cout << "reg0 = " << reg0 << '\n';
+    std::cout << "reg1 = " << reg1 << '\n';
+    std::cout << "reg2 = " << reg2 << '\n';
+    registers[get_registers(reg_0)] = reg1 + reg2;
 }
 
 
@@ -196,5 +198,17 @@ std::string reg_0, std::string const_immed)
     //std::cout << registers_map[reg];
 }
 
+
+void pseudo_sub(std::vector < unsigned int > & registers, 
+std::string reg_0, std::string reg_1, std::string reg_2)
+{
+    unsigned int reg0 = registers[get_registers(reg_0)];
+    unsigned int reg1 = registers[get_registers(reg_1)];
+    unsigned int reg2 = registers[get_registers(reg_2)];
+    std::cout << "reg0 = " << reg0 << '\n';
+    std::cout << "reg1 = " << reg1 << '\n';
+    std::cout << "reg2 = " << reg2 << '\n';
+    registers[get_registers(reg_0)] = reg1 - reg2;
+}
 
 #endif

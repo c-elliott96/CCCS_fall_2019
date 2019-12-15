@@ -22,16 +22,20 @@ int main()
   // creates and itializes command map - format: unsigned int hash, string command
   std::map < unsigned int, std::string > map = map_commands();
   std::map < unsigned int, std::string > ::iterator it = map.begin();
-  while (it != map.end())
-  {
-    std::cout << it->first << ' ' << it->second << '\n';
-    ++it;
-  }
+  // while (it != map.end())
+  // {
+  //   std::cout << it->first << ' ' << it->second << '\n';
+  //   ++it;
+  // }
   // creates and itializes registers map
   //std::map < unsigned int, unsigned int > map_registers;
   std::vector < unsigned int > registers;
   create_registers_1(registers);
+  std::vector < unsigned int > data;
+
   print_map_registers_1(registers);
+  print_data(data);
+
   while(1)
   {
     std::cout << "Enter a PCSPIM / MIPS command: ";

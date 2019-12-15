@@ -34,6 +34,46 @@ unsigned int alt_hash (std::string str)
 }
 
 
+void create_data(std::vector < unsigned int > & data)
+{
+  for (int i = 0; i < 1; ++i)
+  {
+    data.push_back(0);
+  }
+}
+
+
+void print_data(const std::vector < unsigned int > & data)
+{
+  std::cout << "================================================================\n"
+            << "DATA SEGMENT\n"
+            << "================================================================\n"
+            << "  addr (int)| addr (hex)| value (int)| value (hex)| value (char)\n"
+            << "------------+-----------+------------+------------+-------------\n";
+  if (data.empty())
+  {
+    std::cout << "Nothing in Data ... " << '\n';
+    return;
+  }
+  else 
+  {
+    for (int i = 0; i < data.size(); ++i)
+    {
+      unsigned int addr = 100000 + (i * 4);
+      std::cout << std::setw(12);
+      std::cout << addr << '|';
+      std::cout << std::setbase(16);
+      std::cout << addr << '|';
+      std::cout << std::setbase(10);
+      std::cout << data[i] << '|';
+      std::cout << std::setbase(16);
+      std::cout << data[i] << '|';
+      std::cout << std::setbase(10);
+      std::cout << char(data[i]) << std::endl;
+    } 
+  }
+}
+
 // use for taking in std::string input
 std::string get_input(std::string &S)
 {
@@ -268,8 +308,7 @@ std::vector < unsigned int > & registers)
       break;
       case 597: // add
       {
-        //pseudo_add()
-        
+        pseudo_add(registers, reg_0, reg_1, reg_2);
       }
       break;
       case 617: // and
@@ -299,7 +338,7 @@ std::vector < unsigned int > & registers)
       break;
       case 643: // sub
       {
-        
+        pseudo_sub(registers, reg_0, reg_1, reg_2);
       }
       break;
       case 654: // ori
@@ -596,6 +635,7 @@ void do_action(std::string & command, std::map < unsigned int, std::string > map
     ++it;
   }
 
+
   if (command_exists)
   {
     // determine what kind of command it is, then run function for that command
@@ -843,9 +883,9 @@ void print_map_registers_1(const std::vector < unsigned int > & regs)
   //     std::cout << std::setw(10) << regs[i] << '\n';
   //   }
   // }
-  std::cout << "====================================================\n"
-            << "REGISTERS                                          |\n"
-            << "====================================================\n";
+  std::cout << "================================================================\n"
+            << "REGISTERS\n"
+            << "================================================================\n";
   std::cout << "R0" << std::setw(11) << "[r0] = " << regs[0] << '\n'
             << "R1" << std::setw(11) << "[at] = " << regs[1] << '\n'
             << "R2" << std::setw(11) << "[v0] = " << regs[2] << '\n'
@@ -881,7 +921,7 @@ void print_map_registers_1(const std::vector < unsigned int > & regs)
             << "R32" << std::setw(10) << "[pc] = " << regs[32] << '\n'
             << "R33" << std::setw(10) << "[hi] = " << regs[33] << '\n'
             << "R34" << std::setw(10) << "[lo] = " << regs[34] << '\n'
-            << "====================================================\n";
+            << "================================================================\n";
 }
 
 
