@@ -80,256 +80,389 @@ std::string ascii_to_uint(const std::vector< unsigned int > & x)
 
 
 // finds first substring ... not sure if needed 
-std::vector < std::string > tokenize_do(const std::vector < unsigned int > & x, 
-                                        std::map < unsigned int , std::string > map,
-                                        std::map < unsigned int, unsigned int > map_registers)
+void tokenize_do(const std::vector < unsigned int > & x, 
+std::map < unsigned int , std::string > map,
+std::vector < unsigned int > & registers)
 {
-  std::vector < std::string > whole_string;
-  std::string substring;
-  std::string reg_string;
-  bool is_register = false;
+  // parse string for command 
   bool is_command = false;
-  bool is_data_or_text = false;
-  bool reg_add = false;
-  int i = 0;
-  while (i < x.size())
+  bool is_dot = false;
+  std::vector < unsigned int > cmd_uints;
+  for (int i = 0; i < x.size(); ++i)
   {
+    if (x[i] == 46)
+    {
+      is_dot = true;
+    }
+
     if (x[i] != 32)
     {
-      substring.push_back(char(x[i]));
+      cmd_uints.push_back(x[i]);
     }
-    if (x[i] == 32 && !is_data_or_text)
+
+    if (x[i] == 32 && !is_dot)
     {
       is_command = true;
       break;
-    }
-    else if (x[i] == 46)
-    {
-      // it's either .data or .text
-      is_data_or_text = true;
-      break;
-    }
-    ++i;
+    } 
   }
+
+  std::string reg_0;
+  std::string reg_1;
+  std::string reg_2;
+  std::string const_immed;
 
   if (is_command)
   {
-    i = substring.size();
-    whole_string.push_back(substring);
-    while (i < x.size())
+    bool reg_check = false;
+
+    bool reg_0_done = false;
+    bool reg_1_done = false;
+    bool reg_2_done = false;
+    bool comma = false;
+    bool space = false;
+    bool immediate = false;
+
+    for (int i = 0; i < x.size(); ++i)
     {
-      if (x[i] == 36 && !reg_add)
+      if (x[i] == 36) // if we hit a '$'
       {
-        reg_add = true;
-      }
-      if (reg_add && x[i] != 36 && x[i] != 44) // if we're looking for a register and we're not currently looking at a dollar sign or a comma
+        reg_check = true;
+        //continue;
+      } 
+
+      if (x[i] == 44 && !comma)
       {
-        reg_string.push_back(char(x[i]));
+        comma = true;
       }
 
-      if (x[i] == 32 || x[i] == 44) // we've completed adding the register information, reset and continue
+      if (x[i] == 36)
       {
-        reg_string.push_back(' ');
-        reg_add = false;
+        comma = false;
+        space = false;
       }
-      ++i;
+
+      if (x[i] == 32 && comma)
+      {
+        space = true;
+      }
+
+      if (comma && space && x[i] != 32 && x[i] > 47 && x[i] < 58)
+      {
+        immediate = true;
+        const_immed.push_back(char(x[i]));
+      }
+
+      if (reg_check && !reg_0_done && x[i] != 44 && x[i] != 32)
+      {
+        reg_0.push_back(char(x[i]));
+      }
+
+      if (reg_check && !reg_1_done && reg_0_done && x[i] != 44 && x[i] != 32)
+      {
+        reg_1.push_back(char(x[i]));
+      }
+
+      if (reg_check && !reg_2_done && reg_0_done && reg_1_done
+      && x[i] != 44 && x[i] != 32)
+      {
+        reg_2.push_back(char(x[i]));
+      }
+
+      if (reg_check && x[i] == 44)
+      {
+        reg_check = false;
+        if (!reg_0.empty())
+        {
+          reg_0_done = true;
+        }
+
+        if (reg_0_done && !reg_1.empty())
+        {
+          reg_1_done = true;
+        }
+
+        if (reg_0_done && reg_1_done && !reg_2.empty())
+        {
+          reg_2_done = true;
+        }        
+      }
     }
-    whole_string.push_back(reg_string);
+  }
+  for (int i = 0; i < cmd_uints.size(); ++i)
+  {
+    std::cout << cmd_uints[i] << ' ';
+  }
+  std::cout << '\n';
+  std::string cmd_string = ascii_to_uint(cmd_uints);
+  std::cout << "command : ";
+  std::cout << cmd_string << '\n';
 
-    unsigned int cmd_hash = alt_hash(whole_string[0]);
-    std::cout << cmd_hash << '\n';
-    switch (cmd_hash)
+  if (!reg_0.empty())
+  {
+    std::cout << "reg_0 = ";
+    std::cout << reg_0 << std::endl;
+  }
+
+  if (!reg_1.empty())
+  {
+    std::cout << "reg_1 = ";
+    std::cout << reg_1 << std::endl;
+  }
+
+  if (!reg_2.empty())
+  {
+    std::cout << "reg_2 = ";
+    std::cout << reg_2 << std::endl;
+  }
+
+  if (!const_immed.empty())
+  {
+    std::cout << "const = ";
+    std::cout << const_immed << std::endl;
+  }
+
+  unsigned int a = alt_hash(cmd_string);
+
+  switch (a)
     {
       case 106: // j 
       {
-        break;
+        //
       }
+      break;
       case 304: // lb
       {
-        break;
+        //
       }
+      break;
       case 311: // sb
       {
-        break;
+        //
       }
+      break;
       case 318: // li
       {
-        pseudo_li(map_registers, whole_string);
-        break;
+        pseudo_li(registers, reg_0, const_immed);
       }
+      break;
       case 334: // jr
       {
-        break;
+        
       }
+      break;
       case 339: // or 
       {
-        break;
+        
       }
+      break;
       case 346: // lw
       {
-        break;
+        
       }
+      break;
       case 353: // sw
       {
-        break;
+        
       }
+      break;
       case 597: // add
       {
         //pseudo_add()
-        break;
+        
       }
+      break;
       case 617: // and
       {
-        break;
+        
       }
+      break;
       case 621: // bne
       {
-        break;
+        
       }
+      break;
       case 624: // jal
       {
-        break;
+        
       }
+      break;
       case 634: // sra
       {
-        break;
+        
       }
+      break;
       case 639: // beq
       {
-        break;
+        
       }
+      break;
       case 643: // sub
       {
-        break;
+        
       }
+      break;
       case 654: // ori
       {
-        break;
+        
       }
+      break;
       case 655: // sll
       {
-        break;
+        
       }
+      break;
       case 657: // lui
       {
-        break;
+        
       }
+      break;
       case 664: // div
       {
-        break;
+        
       }
+      break;
       case 667: // srl
       {
-        break;
+        
       }
+      break;
       case 679: // slt
       {
-        break;
+        
       }
+      break;
       case 684: // xor 
       {
-        break;
+        
       }
+      break;
       case 1017: // addi
       {
-        break;
+        
       }
+      break;
       case 1037: // andi
       {
-        break;
+        
       }
+      break;
       case 1045: // mfhi
       {
-        break;
+        
       }
+      break;
       case 1065: // addu
       {
-        break;
+        
       }
+      break;
       case 1081: // mflo
       {
-        break;
+        
       }
+      break;
       case 1095: // bgez
       {
-        break;
+        
       }
+      break;
       case 1099: // slti
       {
-        break;
+        
       }
+      break;
       case 1104: // xori
       {
-        break;
+        
       }
+      break;
       case 1105: // blez
       {
-        break;
+        
       }
+      break;
       case 1111: // subu
       {
-        break;
+        
       }
+      break;
       case 1113: // noop
       {
-        break;
+        
       }
+      break;
       case 1127: // sllv
       {
-        break;
+        
       }
+      break;
       case 1131: // mult
       {
-        break;
+        
       }
+      break;
       case 1132: // divu 
       {
-        break;
+        
       }
+      break;
       case 1139: // srlv
       {
-        break;
+        
       }
+      break;
       case 1140: // bgtz
       {
-        break;
+        
       }
+      break;
       case 1147: // sltu
       {
-        break;
+        
       }
+      break;
       case 1150: // bltz
       {
-        break;
+        
       }
+      break;
       case 1602: // addiu
       {
-        break;
+        
       }
+      break;
       case 1684: // sltiu
       {
-        break;
+        
       }
+      break;
       case 1716: // multu
       {
-        break;
+        
       }
+      break;
       case 2228: // bgezal
       {
-        break;
+        
       }
+      break;
       case 2283: // bltzal
       {
-        break;
+        
       }
+      break;
       case 2987: // syscall
       {
-        break;
+        
       }
-    }
-  }  
-
-  return whole_string;
+      break;
+      default: 
+      {
+        std::cout << "invalid command syntax\n";
+      }
+      break;
+    } 
 }
 
 
@@ -353,6 +486,15 @@ void create_registers(std::map < unsigned int, unsigned int > & map)
   for (unsigned int i = 0; i < 35; ++i)
     {
         map.insert(std::pair< unsigned int , unsigned int > (i , 0));
+    }
+}
+
+
+void create_registers_1(std::vector < unsigned int > & regs)
+{
+  for (int i = 0; i < 35; ++i)
+    {
+      regs.push_back(0);
     }
 }
 
@@ -448,7 +590,7 @@ void do_action(std::string & command, std::map < unsigned int, std::string > map
     if (it->first == tok)
     {
       command_exists = true;
-      break;
+      
     }
     else
     ++it;
@@ -662,21 +804,86 @@ void print_map_commands(std::map < unsigned int, std::string> map)
 }
 
 
+// obsolete
 void print_map_registers(std::map < unsigned int, unsigned int > map)
 {
   // print map:
-  std::map < unsigned int, unsigned int > ::iterator it2 = map.begin();
-  int j = 0;
-  for (it2 = map.begin(); it2 != map.end(); ++it2)
-  {
-    std::cout << "R" << j;
-    if (j < 10) std::cout << ' ';
+  // std::map < unsigned int, unsigned int > ::iterator it2 = map.begin();
+  // int j = 0;
+  // for (it2 = map.begin(); it2 != map.end(); ++it2)
+  // {
+  //   std::cout << "R" << j;
+  //   if (j < 10) std::cout << ' ';
 
-    std::cout << std::setw(5) << "=>" 
-    << std::right << std::setw(10) << it2->second << '\n';
-    ++j;
+  //   std::cout << std::setw(5) << "=>" 
+  //   << std::right << std::setw(10) << it2->second << '\n';
+  //   ++j;
+  // }
+  for (int i = 0; i < map.size(); ++i)
+  {
+    std::cout << "R" << i;
+    std::cout << std::setw(10) << map[i] << '\n';
   }
 }
+
+
+void print_map_registers_1(const std::vector < unsigned int > & regs)
+{
+  // for (int i = 0; i < regs.size(); ++i)
+  // {
+  //   if (i < 10)
+  //   {
+  //     std::cout << 'R' << i << ' ';
+  //     std::cout << std::setw(10) << regs[i] << '\n';
+  //   }
+
+  //   else 
+  //   {
+  //     std::cout << 'R' << i;
+  //     std::cout << std::setw(10) << regs[i] << '\n';
+  //   }
+  // }
+  std::cout << "====================================================\n"
+            << "REGISTERS                                          |\n"
+            << "====================================================\n";
+  std::cout << "R0" << std::setw(11) << "[r0] = " << regs[0] << '\n'
+            << "R1" << std::setw(11) << "[at] = " << regs[1] << '\n'
+            << "R2" << std::setw(11) << "[v0] = " << regs[2] << '\n'
+            << "R3" << std::setw(11) << "[v1] = " << regs[3] << '\n'
+            << "R4" << std::setw(11) << "[a0] = " << regs[4] << '\n'
+            << "R5" << std::setw(11) << "[a1] = " << regs[5] << '\n'
+            << "R6" << std::setw(11) << "[a2] = " << regs[6] << '\n'
+            << "R7" << std::setw(11) << "[a3] = " << regs[7] << '\n'
+            << "R8" << std::setw(11) << "[t0] = " << regs[8] << '\n'
+            << "R9" << std::setw(11) << "[t1] = " << regs[9] << '\n'
+            << "R10" << std::setw(10) << "[t2] = " << regs[10] << '\n'
+            << "R11" << std::setw(10) << "[t3] = " << regs[11] << '\n'
+            << "R12" << std::setw(10) << "[t4] = " << regs[12] << '\n'
+            << "R13" << std::setw(10) << "[t5] = " << regs[13] << '\n'
+            << "R14" << std::setw(10) << "[t6] = " << regs[14] << '\n'
+            << "R15" << std::setw(10) << "[t7] = " << regs[15] << '\n'
+            << "R16" << std::setw(10) << "[s0] = " << regs[16] << '\n'
+            << "R17" << std::setw(10) << "[s1] = " << regs[17] << '\n'
+            << "R18" << std::setw(10) << "[s2] = " << regs[18] << '\n'
+            << "R19" << std::setw(10) << "[s3] = " << regs[19] << '\n'
+            << "R20" << std::setw(10) << "[s4] = " << regs[20] << '\n'
+            << "R21" << std::setw(10) << "[s5] = " << regs[21] << '\n'
+            << "R22" << std::setw(10) << "[s6] = " << regs[22] << '\n'
+            << "R23" << std::setw(10) << "[s7] = " << regs[23] << '\n'
+            << "R24" << std::setw(10) << "[t8] = " << regs[24] << '\n'
+            << "R25" << std::setw(10) << "[t9] = " << regs[25] << '\n'
+            << "R26" << std::setw(10) << "[k0] = " << regs[26] << '\n'
+            << "R27" << std::setw(10) << "[k1] = " << regs[27] << '\n'
+            << "R28" << std::setw(10) << "[gp] = " << regs[28] << '\n'
+            << "R29" << std::setw(10) << "[sp] = " << regs[29] << '\n'
+            << "R30" << std::setw(10) << "[s8] = " << regs[30] << '\n'
+            << "R31" << std::setw(10) << "[ra] = " << regs[31] << '\n'
+            << "R32" << std::setw(10) << "[pc] = " << regs[32] << '\n'
+            << "R33" << std::setw(10) << "[hi] = " << regs[33] << '\n'
+            << "R34" << std::setw(10) << "[lo] = " << regs[34] << '\n'
+            << "====================================================\n";
+}
+
 
 
 #endif

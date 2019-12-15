@@ -28,15 +28,17 @@ int main()
     ++it;
   }
   // creates and itializes registers map
-  std::map < unsigned int, unsigned int > map_registers;
-  create_registers(map_registers);
+  //std::map < unsigned int, unsigned int > map_registers;
+  std::vector < unsigned int > registers;
+  create_registers_1(registers);
+  print_map_registers_1(registers);
   while(1)
   {
     std::cout << "Enter a PCSPIM / MIPS command: ";
 
     std::string input = get_input(); // get command input
     std::vector< unsigned int> uints = str_to_uint(input); // convert string into a uint vec
-    tokenize_do(uints, map, map_registers);
+    tokenize_do(uints, map, registers);
     std::string str;		
     str = ascii_to_uint(uints); // turn uints back into chars (not sure if this is necessary
 
@@ -59,7 +61,7 @@ int main()
     // tokenize() parses unsigned int vector
     //tokenize(uints);
     
-    //print_registers(map);
+    print_map_registers_1(registers);
     //print_instructions_uint(instructions_uint);
     //interpret(uints);
     //std::cout << "Hashed command: " << hash(uints) << '\n';

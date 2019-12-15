@@ -12,7 +12,16 @@
 
 unsigned int get_registers (std::string in)
 {    
-    std::cout << '*' << in << '*' << '\n';
+    //std::cout << in << '\n';
+    for (int i = 0; i < in.size(); ++i)
+    {
+        if (in[i] == '$')
+        {
+            in.erase(0, 1);
+        }
+    }
+    // std::cout << "get_registers() string in = ";
+    // std::cout << '*' << in << '*' << '\n';
     if (in == "r0")
     {
         return 0;
@@ -157,16 +166,10 @@ unsigned int get_registers (std::string in)
 }
 
 
-int char_to_int(std::string str)
+unsigned int char_to_int(std::string str)
 {
-    int sum = 0;
-    for (int i = 0; i < str.size(); ++i)
-    {
-        int j = (int(str[i]) - 48) * 10;
-        sum += j;
-    }
-    std::cout << sum << '\n';
-    return sum;    
+    int sum_int = stoi(str);
+    return unsigned(sum_int);    
 }
 
 
@@ -181,18 +184,16 @@ std::vector < std::string > whole_string)
 }
 
 
-void pseudo_li(std::map < unsigned int, unsigned int > & registers_map,
-std::vector < std::string > whole_string)
+void pseudo_li(std::vector < unsigned int > & registers,
+std::string reg_0, std::string const_immed)
 {
-    //format: li $t0, const
-    unsigned int a;
-    std::cout << get_registers(whole_string[1]);
-    a = get_registers(whole_string[1]);
-    //int b = char_to_int(whole_string[2]);
-    //b = unsigned(b);
-    std::cout << "Register " << a << " = ";
-    //std::cout << b << '\n';
-    //registers_map[a] = b;
+    //format: li $reg_0, const_immed
+    unsigned int reg = get_registers(reg_0);
+    unsigned int immed = char_to_int(const_immed);
+    //std::cout << reg << '\n';
+    registers[reg] = immed;
+    //std::cout << immed << '\n';
+    //std::cout << registers_map[reg];
 }
 
 
