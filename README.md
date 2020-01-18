@@ -1,10 +1,10 @@
-<h1>Christian Elliott's Computer Science student repo</h1>
-
+<h1>Christian Elliott - Columbia College Computer Science Fall_2019</h1>
+<br>
+<p>This repo contains</p>
 <ul>
-  <li>About Me</li>
-    <p>I'm a senior at Columbia College in Columbia, Missouri, studying computer science!</p>
-  <li>What is in this repo?</li>
-    <p>Mostly class work, but I'll also be adding in personal projects as I have time</p>
-  <li>How can I contact you?</li>
-    <p>Email me! cdelliott96@gmail.com</p>
+  <li>Galaxian re-make using C/C++ and SDL</li>
+  <li>QuadTree data structure graphical demonstration - C/C++ with SDL</li>
+  <li>Brick-Breaker re-make called "Brick Breaker Neon" - C/C++ with SDL</li>
+  <li>CISS360 (Assembly Language) class folder</li>
+  <li>YouTube playlist link demonstrating the games mentioned above</li>
 </ul>
